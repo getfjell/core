@@ -163,7 +163,7 @@ export const toKeyTypeArray = <
   logger.trace('toKeyTypeArray', { ik });
   if (isComKey(ik)) {
     const ck = ik as ComKey<S, L1, L2, L3, L4, L5>;
-    return [ck.kt, ...ck.loc.map(l => l.kt)];
+    return [ck.kt, ...ck.loc.map((l : LocKey<L1 | L2 | L3 | L4 | L5>) => l.kt)];
   } else {
     return [(ik as PriKey<S>).kt];
   }
@@ -181,7 +181,7 @@ export const abbrevIK = <
   if(ik) {
     if (isComKey(ik)) {
       const ck = ik as ComKey<S, L1, L2, L3, L4, L5>;
-      return `${ck.kt}:${ck.pk}:${ck.loc.map(l => `${l.kt}:${l.lk}`).join(',')}`;
+      return `${ck.kt}:${ck.pk}:${ck.loc.map((l : LocKey<L1 | L2 | L3 | L4 | L5>) => `${l.kt}:${l.lk}`).join(',')}`;
     } else {
       return `${(ik as PriKey<S>).kt}:${(ik as PriKey<S>).pk}`;
     }
@@ -245,12 +245,10 @@ export const itemKeyToLocKeyArray =
     let lka: Array<LocKey<L1 | L2 | L3 | L4 | L5>> = [];
     if (isComKey(ik)) {
       const ck = ik as ComKey<S, L1, L2, L3, L4, L5>;
-      // @ts-expect-error
-      lka = [{ kt: ck.kt, lk: ck.pk } as LocKey<S>, ...ck.loc];
+      lka = [{ kt: ck.kt, lk: ck.pk } as unknown as LocKey<L1 | L2 | L3 | L4 | L5>, ...ck.loc];
     } else {
       const pk = ik as PriKey<S>;
-      // @ts-expect-error
-      lka = [{ kt: pk.kt, lk: pk.pk } as LocKey<S>];
+      lka = [{ kt: pk.kt, lk: pk.pk } as unknown as LocKey<L1 | L2 | L3 | L4 | L5>];
     }
     logger.trace('itemKeyToLocKeyArray Results', { ik: abbrevIK(ik), lka: abbrevLKA(lka) });
     return lka as LocKeyArray<S, L1, L2, L3, L4>;
@@ -272,18 +270,18 @@ export const locKeyArrayToItemKey =
     L5 extends string = never
   >(lka: LocKeyArray<L1, L2, L3, L4, L5>):
     PriKey<L1> | ComKey<L1, L2, L3, L4, L5> => {
-    // @ts-expect-error
-    logger.trace('locKeyArrayToItemKey', { lka: abbrevLKA(lka) });
+    logger.trace('locKeyArrayToItemKey', { lka: abbrevLKA(lka as Array<LocKey<L1 | L2 | L3 | L4 | L5>>) });
 
-    if(lka.length === 1) {
+    if(lka && lka.length === 1) {
       const priKey = cPK(lka[0].lk, lka[0].kt);
       return priKey as PriKey<L1>;
-    } else {
+    } else if (lka && lka.length > 1 && lka[0] !== undefined) {
       const locs = lka.slice(1);
-      // @ts-expect-error
       const priKey = cPK(lka[0].lk, lka[0].kt);
-      const comKey = { kt: priKey.kt, pk: priKey.pk, loc: locs as LocKeyArray<L2, L3, L4, L5> };
+      const comKey = { kt: priKey.kt, pk: priKey.pk, loc: locs as unknown as LocKeyArray<L2, L3, L4, L5> };
       return comKey as ComKey<L1, L2, L3, L4, L5>;
+    } else {
+      throw new Error('locKeyArrayToItemKey: lka is undefined or empty');
     }
   }
 
@@ -328,8 +326,7 @@ export const isValidComKey = <
   L5 extends string = never
 >(key: ComKey<S, L1, L2, L3, L4, L5>): boolean => {
   return (key !== undefined
-    // @ts-expect-error
-    && key !== null) && isValidPriKey(key) && isValidLocKeyArray(key.loc);
+    && key !== null) && isValidPriKey(key) && isValidLocKeyArray(key.loc as Array<LocKey<L1 | L2 | L3 | L4 | L5>>);
 }
 
 export const isValidItemKey = <
