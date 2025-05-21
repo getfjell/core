@@ -17,7 +17,8 @@
     "dev": "concurrently \"tsc --watch\" \"tsc-alias -w\"",
     "build": "tsc --noEmit && vite build",
     "clean": "rimraf dist",
-    "test": "pnpm run lint && jest --coverage"
+    "test": "pnpm run lint && jest --coverage",
+    "prepublishOnly": "pnpm run clean && pnpm run build"
   },
   "dependencies": {
     "@eslint/js": "^9.27.0",
