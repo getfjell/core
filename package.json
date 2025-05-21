@@ -20,13 +20,13 @@
     "prepublishOnly": "pnpm run clean && pnpm run build"
   },
   "dependencies": {
-    "@eslint/js": "^9.27.0",
     "@fjell/logging": "^4.3",
     "deepmerge": "^4.3.1",
     "flatted": "^3.3.3",
     "luxon": "^3.5.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.27.0",
     "@eslint/eslintrc": "^3.3.1",
     "@swc/core": "^1.11.24",
     "@tsconfig/recommended": "^1.0.8",
