@@ -1,5 +1,5 @@
 import Logging from '@fjell/logging';
 
-const LibLogger = Logging.getLogger('@fjellproject/core');
+const LibLogger = Logging.getLogger('@fjell/core');
 
 export default LibLogger;
