@@ -20,6 +20,7 @@
     "test": "pnpm run lint && jest --coverage"
   },
   "dependencies": {
+    "@eslint/js": "^9.27.0",
     "@fjell/logging": "^4.3",
     "flatted": "^3.3.3",
     "luxon": "^3.5.0"
