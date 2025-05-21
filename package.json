@@ -3,18 +3,17 @@
   "description": "Core Items for Fjell",
   "version": "4.4.1",
   "license": "Apache-2.0",
-  "main": "./dist/src/index.js",
+  "main": "./dist/index.js",
   "exports": {
     ".": {
-      "require": "./dist/src/index.js",
-      "types": "./dist/src/index.d.ts",
-      "default": "./dist/src/index.js"
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
     }
   },
   "type": "module",
   "scripts": {
     "lint": "eslint . --ext .ts --fix",
-    "dev": "concurrently \"tsc --watch\" \"tsc-alias -w\"",
     "build": "tsc --noEmit && vite build",
     "clean": "rimraf dist",
     "test": "pnpm run lint && jest --coverage",
