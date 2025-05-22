@@ -1,25 +1,5 @@
 import { IQFactory } from '@/item/IQFactory';
 
-jest.mock('@fjell/logging', () => {
-  return {
-    get: jest.fn().mockReturnThis(),
-    getLogger: jest.fn().mockReturnThis(),
-    default: jest.fn(),
-    error: jest.fn(),
-    warning: jest.fn(),
-    info: jest.fn(),
-    debug: jest.fn(),
-    trace: jest.fn(),
-    emergency: jest.fn(),
-    alert: jest.fn(),
-    critical: jest.fn(),
-    notice: jest.fn(),
-    time: jest.fn().mockReturnThis(),
-    end: jest.fn(),
-    log: jest.fn(),
-  }
-});
-
 describe('Testing IQFactory', () => {
   const nowDate = new Date();
 
@@ -119,11 +99,11 @@ describe('Testing IQFactory', () => {
         IQFactory.condition('yimby', null, '==');
       }).toThrow('Invalid condition: {\"column\":\"yimby\",\"value\":null,\"operator\":\"==\"}');
     });
-  
+
     test('Query with invalid props throws error', () => {
       expect(() => {
         // @ts-ignore
-        IQFactory.conditions([ { column: 'yimby', value: null, operator: '==' }]);
+        IQFactory.conditions([{ column: 'yimby', value: null, operator: '==' }]);
       }).toThrow('Invalid condition: {\"column\":\"yimby\",\"value\":null,\"operator\":\"==\"}');
     });
 
