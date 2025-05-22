@@ -1,6 +1,7 @@
 import { isComItem, isPriItem, validateKeys, validatePK } from '@/item/IUtils';
 import { Item } from '@/items';
 import { AllItemTypeArrays, ComKey } from '@/keys';
+import { describe, expect, test } from 'vitest';
 
 describe('Testing IUtils', () => {
   const validItem: Item<'test'> = {

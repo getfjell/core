@@ -1,5 +1,6 @@
 import { Condition, ConditionOperator, isCondition, ItemQuery } from '@/item/ItemQuery';
 import { vi } from 'vitest';
+import { describe, expect, test } from 'vitest';
 
 vi.mock('@fjell/logging', () => {
   return {
