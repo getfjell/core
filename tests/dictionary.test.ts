@@ -1,4 +1,5 @@
 import { Dictionary } from "@/dictionary";
+import { describe, expect, test } from 'vitest';
 
 describe('Dictionary', () => {
   let dictionary: Dictionary<string, number>;

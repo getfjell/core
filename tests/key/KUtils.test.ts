@@ -26,6 +26,7 @@ import {
   toKeyTypeArray
 } from '@/key/KUtils';
 import { ComKey, LocKey, LocKeyArray, PriKey } from '@/keys';
+import { describe, expect, it } from 'vitest';
 
 describe('KUtils', () => {
   describe('isItemKeyEqual', () => {
