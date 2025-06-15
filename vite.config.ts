@@ -60,6 +60,6 @@ export default defineConfig({
     // Make sure Vite generates ESM-compatible code
     modulePreload: false,
     minify: false,
-    sourcemap: true
+    sourcemap: 'inline'
   },
 });
