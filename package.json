@@ -7,7 +7,7 @@
   "module": "./dist/esm/index.js",
   "exports": {
     ".": {
-      "types": "./dist/esm/index.d.ts",
+      "types": "./dist/index.d.ts",
       "require": "./dist/cjs/index.js",
       "import": "./dist/esm/index.js"
     }
@@ -15,7 +15,8 @@
   "type": "module",
   "scripts": {
     "lint": "eslint . --ext .ts --fix",
-    "build": "tsc --noEmit && vite build",
+    "dev": "concurrently \"tsc --noEmit --watch\" \"vite build --watch\"",
+    "build": "pnpm run lint && tsc --noEmit && vite build",
     "clean": "rimraf dist",
     "test": "pnpm run lint && vitest run --coverage",
     "prepublishOnly": "pnpm run clean && pnpm run build"
