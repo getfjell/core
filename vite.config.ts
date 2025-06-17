@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 import { VitePluginNode } from 'vite-plugin-node';
 import dts from 'vite-plugin-dts';
-import path from 'path';
+import * as path from 'path';
 
 export default defineConfig({
   server: {
@@ -13,6 +13,20 @@ export default defineConfig({
       appPath: './src/index.ts',
       exportName: 'viteNodeApp',
       tsCompiler: 'swc',
+      swcOptions: {
+        sourceMaps: true,
+        jsc: {
+          parser: {
+            syntax: 'typescript',
+            tsx: false,
+            decorators: true,
+          },
+          transform: {
+            legacyDecorator: true,
+            decoratorMetadata: true,
+          },
+        },
+      },
     }),
     // visualizer({
     //     template: 'network',
@@ -36,16 +50,25 @@ export default defineConfig({
     outDir: 'dist',
     lib: {
       entry: './src/index.ts',
-      formats: ['es'],
     },
     rollupOptions: {
       input: 'src/index.ts',
-      output: {
-        format: 'esm',
-        entryFileNames: '[name].js',
-        preserveModules: true,
-        exports: 'named',
-      },
+      output: [
+        {
+          dir: 'dist/esm',
+          format: 'esm',
+          entryFileNames: '[name].js',
+          preserveModules: true,
+          exports: 'named',
+        },
+        {
+          dir: 'dist/cjs',
+          format: 'cjs',
+          entryFileNames: '[name].js',
+          preserveModules: true,
+          exports: 'named',
+        },
+      ],
     },
     // Make sure Vite generates ESM-compatible code
     modulePreload: false,

@@ -6,27 +6,7 @@ import { ItemQuery, QueryParams } from "@/item/ItemQuery";
 import { Item } from '@/items';
 import { ComKey, PriKey } from '@/keys';
 import { DateTime } from 'luxon';
-
-jest.mock('@fjell/logging', () => {
-  return {
-    get: jest.fn().mockReturnThis(),
-    getLogger: jest.fn().mockReturnThis(),
-    default: jest.fn(),
-    error: jest.fn(),
-    warning: jest.fn(),
-    info: jest.fn(),
-    debug: jest.fn(),
-    trace: jest.fn(),
-    emergency: jest.fn(),
-    alert: jest.fn(),
-    critical: jest.fn(),
-    notice: jest.fn(),
-    time: jest.fn().mockReturnThis(),
-    end: jest.fn(),
-    log: jest.fn(),
-  }
-});
-
+import { describe, expect, test } from 'vitest';
 describe('Testing IQUtils', () => {
   const nowDate = new Date();
   const profileKey: PriKey<'profile'> = { kt: 'profile', pk: '1-1-1-1-1' };
@@ -647,7 +627,7 @@ describe('Testing IQUtils', () => {
                     { column: 'feels', value: true, operator: '==' },
                     { column: 'skier', value: true, operator: '==' },
                   ]
-                }              ]
+                }]
             }
           ]
         }
