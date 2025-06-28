@@ -2,6 +2,7 @@ import { defineConfig } from 'vite';
 import { VitePluginNode } from 'vite-plugin-node';
 import dts from 'vite-plugin-dts';
 import * as path from 'path';
+import pkg from './package.json';
 
 export default defineConfig({
   server: {
@@ -52,6 +53,7 @@ export default defineConfig({
       entry: './src/index.ts',
     },
     rollupOptions: {
+      external: [...Object.keys(pkg.dependencies || {}), ...Object.keys(pkg.devDependencies || {})],
       input: 'src/index.ts',
       output: [
         {
