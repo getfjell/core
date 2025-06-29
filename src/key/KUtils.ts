@@ -23,7 +23,7 @@ export const isItemKeyEqual = <
   if (isComKey(a) && isComKey(b)) {
     return isComKeyEqual(a as ComKey<S, L1, L2, L3, L4, L5>, b as ComKey<S, L1, L2, L3, L4, L5>);
   } else if (isPriKey(a) && isPriKey(b)) {
-    if(isComKey(a) || isComKey(b)) {
+    if (isComKey(a) || isComKey(b)) {
       return false;
     } else {
       return isPriKeyEqual(a as PriKey<S>, b as PriKey<S>);
@@ -163,7 +163,7 @@ export const toKeyTypeArray = <
   logger.trace('toKeyTypeArray', { ik });
   if (isComKey(ik)) {
     const ck = ik as ComKey<S, L1, L2, L3, L4, L5>;
-    return [ck.kt, ...ck.loc.map((l : LocKey<L1 | L2 | L3 | L4 | L5>) => l.kt)];
+    return [ck.kt, ...ck.loc.map((l: LocKey<L1 | L2 | L3 | L4 | L5>) => l.kt)];
   } else {
     return [(ik as PriKey<S>).kt];
   }
@@ -178,10 +178,10 @@ export const abbrevIK = <
   L5 extends string = never
 >(ik: ComKey<S, L1, L2, L3, L4, L5> | PriKey<S>): string => {
   logger.trace('abbrevIK', { ik });
-  if(ik) {
+  if (ik) {
     if (isComKey(ik)) {
       const ck = ik as ComKey<S, L1, L2, L3, L4, L5>;
-      return `${ck.kt}:${ck.pk}:${ck.loc.map((l : LocKey<L1 | L2 | L3 | L4 | L5>) => `${l.kt}:${l.lk}`).join(',')}`;
+      return `${ck.kt}:${ck.pk}:${ck.loc.map((l: LocKey<L1 | L2 | L3 | L4 | L5>) => `${l.kt}:${l.lk}`).join(',')}`;
     } else {
       return `${(ik as PriKey<S>).kt}:${(ik as PriKey<S>).pk}`;
     }
@@ -228,10 +228,10 @@ export const primaryType = <
 }
 
 /**
- *
- * @param ik ItemKey to be used as a basis for a location
- * @returns
- */
+   *
+   * @param ik ItemKey to be used as a basis for a location
+   * @returns
+   */
 export const itemKeyToLocKeyArray =
   <
     S extends string,
@@ -257,10 +257,10 @@ export const itemKeyToLocKeyArray =
 export const ikToLKA = itemKeyToLocKeyArray;
 
 /**
- * Sometimes you need to take a location key array and convert it to the item key that points to the containing item.
- * @param lka A location key array
- * @returns An item key corresponding to the containing item this location refers to.
- */
+   * Sometimes you need to take a location key array and convert it to the item key that points to the containing item.
+   * @param lka A location key array
+   * @returns An item key corresponding to the containing item this location refers to.
+   */
 export const locKeyArrayToItemKey =
   <
     L1 extends string,
@@ -272,7 +272,7 @@ export const locKeyArrayToItemKey =
     PriKey<L1> | ComKey<L1, L2, L3, L4, L5> => {
     logger.trace('locKeyArrayToItemKey', { lka: abbrevLKA(lka as Array<LocKey<L1 | L2 | L3 | L4 | L5>>) });
 
-    if(lka && lka.length === 1) {
+    if (lka && lka.length === 1) {
       const priKey = cPK(lka[0].lk, lka[0].kt);
       return priKey as PriKey<L1>;
     } else if (lka && lka.length > 1 && lka[0] !== undefined) {
