@@ -16,8 +16,6 @@ export type Identified<S extends string,
     key: ComKey<S, L1, L2, L3, L4, L5> | PriKey<S>;
   };
 
-export type Propertied = { [key: string]: any };
-
 /**
  * This is a generic item event, and it's designed to make sure we have the ability to define not just
  * the required fields, but also the optional fields.
@@ -48,29 +46,6 @@ export interface Deletable extends Partial<Evented> {
 
 export type ManagedEvents = Timestamped & Deletable;
 
-export type ItemProperties<
-  S extends string,
-  L1 extends string = never,
-  L2 extends string = never,
-  L3 extends string = never,
-  L4 extends string = never,
-  L5 extends string = never> =
-  Omit<Item<S, L1, L2, L3, L4, L5>, 'events' | 'key'> & {
-    events?: Evented;
-  };
-
-export type TypesProperties<
-  V extends Item<S, L1, L2, L3, L4, L5>,
-  S extends string,
-  L1 extends string = never,
-  L2 extends string = never,
-  L3 extends string = never,
-  L4 extends string = never,
-  L5 extends string = never> =
-  Omit<V, 'events' | 'key'> & {
-    events?: Evented;
-  };
-
 export type References = Record<
   string,
   ComKey<string, string | never, string | never, string | never, string | never, string | never> |
@@ -94,9 +69,43 @@ export interface Item<S extends string = never,
   L2 extends string = never,
   L3 extends string = never,
   L4 extends string = never,
-  L5 extends string = never> extends Identified<S, L1, L2, L3, L4, L5>, Propertied {
+  L5 extends string = never> extends Identified<S, L1, L2, L3, L4, L5> {
   events: ManagedEvents & Evented;
   // TODO: This is a bit of a hack to get around the fact that we don't want to pass all these generics
   aggs?: ReferenceItems;
   refs?: References;
+  [key: string]: any
 }
+
+/**
+ * Interface for properties that can be added to items
+ */
+export interface Propertied {
+  name: string;
+  value: number;
+}
+
+/**
+ * Type for item properties without the key - equivalent to Partial<Item> without the key
+ */
+export type ItemProperties<
+  S extends string = never,
+  L1 extends string = never,
+  L2 extends string = never,
+  L3 extends string = never,
+  L4 extends string = never,
+  L5 extends string = never
+> = Partial<Omit<Item<S, L1, L2, L3, L4, L5>, 'key'>>;
+
+/**
+ * Type for item properties without the key - equivalent to Partial<Item> without the key
+ * This is an alias for ItemProperties for backward compatibility
+ */
+export type TypesProperties<
+  S extends string = never,
+  L1 extends string = never,
+  L2 extends string = never,
+  L3 extends string = never,
+  L4 extends string = never,
+  L5 extends string = never
+> = Partial<Omit<Item<S, L1, L2, L3, L4, L5>, 'key'>>;

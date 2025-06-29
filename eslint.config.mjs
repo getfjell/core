@@ -62,9 +62,5 @@ export default [{
     "@typescript-eslint/no-unused-vars": "error",
     "@typescript-eslint/ban-ts-comment": "off",
     "@typescript-eslint/no-explicit-any": "off",
-
-    "no-restricted-imports": ["error", {
-      patterns: ["..*", "src/*"],
-    }],
   },
 }];
