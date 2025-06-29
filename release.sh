@@ -71,33 +71,15 @@ gh release create "$TAG_NAME" --notes-file RELEASE_NOTES.md
 
 echo "Creating next release branch..."
 CURRENT_VERSION=$(jq -r .version package.json)
-IFS='.' read -r -a version_parts <<< "$CURRENT_VERSION"
-NEXT_PATCH=$((version_parts[2] + 1))
-NEXT_VERSION="${version_parts[0]}.${version_parts[1]}.$NEXT_PATCH"
+MAJOR=$(echo "$CURRENT_VERSION" | cut -d. -f1)
+MINOR=$(echo "$CURRENT_VERSION" | cut -d. -f2)
+PATCH=$(echo "$CURRENT_VERSION" | cut -d. -f3)
+NEXT_PATCH=$((PATCH + 1))
+NEXT_VERSION="$MAJOR.$MINOR.$NEXT_PATCH"
 
 echo "Next version is $NEXT_VERSION"
 git checkout -b "release/v$NEXT_VERSION"
-pnpm version "$NEXT_VERSION" --no-git-tag-version --allow-same-version
-git add package.json pnpm-lock.yaml
 git commit -m "feat: Start release v$NEXT_VERSION"
 git push -u origin "release/v$NEXT_VERSION"
-
-echo "Restoring workspace configuration"
-if [ -f "pnpm-workspace.yaml.bak" ]; then
-    echo "Restoring pnpm-workspace.yaml"
-    mv pnpm-workspace.yaml.bak pnpm-workspace.yaml
-    git add pnpm-workspace.yaml
-fi
-
-echo "Restoring package.json from main branch"
-git checkout main -- package.json
-git add package.json
-
-echo "Updating lockfile with workspace dependencies"
-pnpm install
-git add pnpm-lock.yaml
-
-git commit -m "chore: Restore workspace configuration for development"
-git push
 
 echo "Release process completed." 
