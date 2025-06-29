@@ -40,14 +40,14 @@ echo "Pull request created: $PR_URL"
 
 echo "Waiting for PR #$PR_NUM checks to complete..."
 while true; do
-  STATUS=$(gh pr view "$PR_NUM" --json statusCheckRollup -q '.statusCheckRollup.state' || echo "FAILURE")
+  STATUS=$(gh pr view "$PR_NUM" --json statusCheckRollup -q '.statusCheckRollup.state' | cat || echo "FAILURE")
   echo "PR status: $STATUS"
   if [[ "$STATUS" == "SUCCESS" ]]; then
     echo "All checks passed!"
     break
   elif [[ "$STATUS" == "FAILURE" || "$STATUS" == "ERROR" ]]; then
     echo "PR checks failed."
-    gh pr checks "$PR_NUM"
+    gh pr checks "$PR_NUM" | cat
     exit 1
   elif [[ "$STATUS" == "PENDING" ]]; then
     echo "Checks are pending... waiting 30 seconds."
