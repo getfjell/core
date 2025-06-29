@@ -1,8 +1,6 @@
 #!/bin/bash
 set -e
 
-echo "Running clean, lint, build, and test..."
-pnpm run clean && pnpm run lint && pnpm run build && pnpm run test
 
 echo "Preparing for release: switching from workspace to remote dependencies."
 if [ -f "pnpm-workspace.yaml" ]; then
@@ -20,6 +18,11 @@ git add package.json pnpm-lock.yaml
 if [ -f "pnpm-workspace.yaml.bak" ]; then
     git add pnpm-workspace.yaml.bak
 fi
+
+echo "Running clean, lint, build, and test..."
+pnpm run clean && pnpm run lint && pnpm run build && pnpm run test
+
+./commit.sh
 
 echo "Bumping version..."
 pnpm version patch
