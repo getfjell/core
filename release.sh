@@ -1,11 +1,6 @@
 #!/bin/bash
 set -e
 
-echo "Running commit script..."
-./commit.sh
-
-
-
 echo "Running clean, lint, build, and test..."
 pnpm run clean && pnpm run lint && pnpm run build && pnpm run test
 
