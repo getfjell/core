@@ -10,7 +10,7 @@ export interface ComKey<
   L5 extends string = never
 > {
   readonly kt: S,
-  readonly pk: UUID | string,
+  readonly pk: UUID | string | number,
   readonly loc: LocKeyArray<L1, L2, L3, L4, L5>
 };
 
@@ -18,14 +18,14 @@ export interface PriKey<
   S extends string,
 > {
   readonly kt: S,
-  readonly pk: UUID | string,
+  readonly pk: UUID | string | number,
 };
 
 export interface LocKey<
   L extends string
 > {
   readonly kt: L,
-  readonly lk: UUID | string
+  readonly lk: UUID | string | number
 };
 export type LocKeyArray<
   L1 extends string = never,
