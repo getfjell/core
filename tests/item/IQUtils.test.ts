@@ -5,7 +5,7 @@ import { abbrevQuery, isQueryMatch, paramsToQuery, queryToParams } from '@/item/
 import { ItemQuery, QueryParams } from "@/item/ItemQuery";
 import { Item } from '@/items';
 import { ComKey, PriKey } from '@/keys';
-import { DateTime } from 'luxon';
+import * as luxon from 'luxon';
 import { describe, expect, test } from 'vitest';
 describe('Testing IQUtils', () => {
   const nowDate = new Date();
@@ -279,8 +279,8 @@ describe('Testing IQUtils', () => {
 
       test('testing event query success - date range - success', () => {
         const query: ItemQuery = IQFactory.event('created', {
-          start: DateTime.fromJSDate(nowDate).minus({ days: 1 }).toJSDate(),
-          end: DateTime.fromJSDate(nowDate).plus({ days: 1 }).toJSDate(),
+          start: luxon.DateTime.fromJSDate(nowDate).minus({ days: 1 }).toJSDate(),
+          end: luxon.DateTime.fromJSDate(nowDate).plus({ days: 1 }).toJSDate(),
         }).toQuery();
         const result = isQueryMatch(item, query);
         expect(result).toBe(true);
@@ -288,8 +288,8 @@ describe('Testing IQUtils', () => {
 
       test('testing event query failure - date range - failure out of range', () => {
         const query: ItemQuery = IQFactory.event('created', {
-          start: DateTime.fromJSDate(nowDate).plus({ days: 1 }).toJSDate(),
-          end: DateTime.fromJSDate(nowDate).plus({ days: 2 }).toJSDate(),
+          start: luxon.DateTime.fromJSDate(nowDate).plus({ days: 1 }).toJSDate(),
+          end: luxon.DateTime.fromJSDate(nowDate).plus({ days: 2 }).toJSDate(),
         }).toQuery();
         const result = isQueryMatch(item, query);
         expect(result).toBe(false);
@@ -297,7 +297,7 @@ describe('Testing IQUtils', () => {
 
       test('testing event query failure - date range - failure end boundary', () => {
         const query: ItemQuery = IQFactory.event('created', {
-          start: DateTime.fromJSDate(nowDate).minus({ days: 1 }).toJSDate(),
+          start: luxon.DateTime.fromJSDate(nowDate).minus({ days: 1 }).toJSDate(),
           end: nowDate,
         }).toQuery();
         const result = isQueryMatch(item, query);
@@ -307,7 +307,7 @@ describe('Testing IQUtils', () => {
       test('testing event query success - date range - success start boundary', () => {
         const query: ItemQuery = IQFactory.event('created', {
           start: nowDate,
-          end: DateTime.fromJSDate(nowDate).plus({ days: 2 }).toJSDate(),
+          end: luxon.DateTime.fromJSDate(nowDate).plus({ days: 2 }).toJSDate(),
         }).toQuery();
         const result = isQueryMatch(item, query);
         expect(result).toBe(true);
@@ -315,8 +315,8 @@ describe('Testing IQUtils', () => {
 
       test('testing event query failure - date range - no matching event', () => {
         const query: ItemQuery = IQFactory.event('toaster', {
-          start: DateTime.fromJSDate(nowDate).minus({ days: 1 }).toJSDate(),
-          end: DateTime.fromJSDate(nowDate).plus({ days: 1 }).toJSDate(),
+          start: luxon.DateTime.fromJSDate(nowDate).minus({ days: 1 }).toJSDate(),
+          end: luxon.DateTime.fromJSDate(nowDate).plus({ days: 1 }).toJSDate(),
         }).toQuery();
         const result = isQueryMatch(item, query);
         expect(result).toBe(false);

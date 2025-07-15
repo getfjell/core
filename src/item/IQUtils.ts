@@ -2,7 +2,7 @@ import { Item, ReferenceItem, References } from "@/items";
 import { isItemKeyEqual, isPriKey } from "@/key/KUtils";
 import { ComKey, PriKey } from "@/keys";
 import LibLogger from "@/logger";
-import { DateTime } from "luxon";
+import * as luxon from 'luxon';
 import { CompoundCondition, Condition, EventQuery, isCondition, ItemQuery, QueryParams } from "./ItemQuery";
 
 const logger = LibLogger.get('IQUtils');
@@ -51,7 +51,7 @@ export const queryToParams = (query: ItemQuery): QueryParams => {
 // This is a dateTimeReviver used for JSON parse - when we convert a param back to a query, we need this.
 const dateTimeReviver = function (key: string, value: string) {
   if (typeof value === 'string') {
-    const parsedDate = DateTime.fromISO(value);
+    const parsedDate = luxon.DateTime.fromISO(value);
     if (parsedDate.isValid) {
       return parsedDate.toJSDate();;
     }
