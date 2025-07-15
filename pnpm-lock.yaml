@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@fjell/logging':
-        specifier: ^4.4.6
-        version: 4.4.6
+        specifier: ^4.4.7
+        version: 4.4.7
       deepmerge:
         specifier: ^4.3.1
         version: 4.3.1
@@ -346,8 +346,8 @@ packages:
     resolution: {integrity: sha512-1+WqvgNMhmlAambTvT3KPtCl/Ibr68VldY2XY40SL1CE0ZXiakFR/cbTspaF5HsnpDMvcYYoJHfl4980NBjGag==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
-  '@fjell/logging@4.4.6':
-    resolution: {integrity: sha512-Cq6ovtl8yu0oqXZ9a9kT8Q71QHMNZV9uSA0gWHFmclPVxFySDorKweav+Trw28sBnmYTxs5YgaabuEiShz0RqQ==}
+  '@fjell/logging@4.4.7':
+    resolution: {integrity: sha512-ned1kfEpFZSDraH/KRaRodoozyBB7PwlrQuiAmBiUUadfBKx6mx56fZIFRlzb/XUHZIypw237I+4P/bsx7cEzg==}
 
   '@humanfs/core@0.19.1':
     resolution: {integrity: sha512-5DyQ4+1JEUzejeK1JGICcideyfUbGixgS9jNgex5nqkW+cY7WZhxBigmieN5Qnw9ZosSNVC9KQKyb+GUaGyKUA==}
@@ -2040,7 +2040,7 @@ snapshots:
       '@eslint/core': 0.15.1
       levn: 0.4.1
 
-  '@fjell/logging@4.4.6': {}
+  '@fjell/logging@4.4.7': {}
 
   '@humanfs/core@0.19.1': {}
 
