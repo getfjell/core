@@ -3,14 +3,122 @@ import {
   ComKey,
   LocKey,
   LocKeyArray,
-  PriKey,
-  UUID
+  PriKey
 } from "@/keys";
 
 import LibLogger from "@/logger";
 
 const logger = LibLogger.get('KUtils');
 
+// Normalize a key value to string for consistent comparison and hashing
+const normalizeKeyValue = (value: string | number): string => {
+  return String(value);
+};
+
+// Normalized hash function for Dictionary that converts pk/lk values to strings
+export const createNormalizedHashFunction = <T>() => {
+  return (key: T): string => {
+    if (typeof key === 'object' && key !== null) {
+      // Create a normalized version of the key with string values
+      const normalizedKey = JSON.parse(JSON.stringify(key));
+
+      // Normalize pk values
+      if ('pk' in normalizedKey && (normalizedKey.pk !== undefined && normalizedKey.pk !== null)) {
+        normalizedKey.pk = normalizeKeyValue(normalizedKey.pk);
+      }
+
+      // Normalize lk values
+      if ('lk' in normalizedKey && (normalizedKey.lk !== undefined && normalizedKey.lk !== null)) {
+        normalizedKey.lk = normalizeKeyValue(normalizedKey.lk);
+      }
+
+      // Normalize loc array lk values
+      if ('loc' in normalizedKey && Array.isArray(normalizedKey.loc)) {
+        normalizedKey.loc = normalizedKey.loc.map((locItem: any) => {
+          if (locItem && 'lk' in locItem && (locItem.lk !== undefined && locItem.lk !== null)) {
+            return { ...locItem, lk: normalizeKeyValue(locItem.lk) };
+          }
+          return locItem;
+        });
+      }
+
+      return JSON.stringify(normalizedKey);
+    }
+    return JSON.stringify(key);
+  };
+};
+
+// Normalized comparison functions
+export const isPriKeyEqualNormalized = <
+  S extends string,
+>(a: PriKey<S>, b: PriKey<S>): boolean => {
+  logger.trace('isPriKeyEqualNormalized', { a, b });
+  return a && b &&
+    normalizeKeyValue(a.pk) === normalizeKeyValue(b.pk) &&
+    a.kt === b.kt;
+};
+
+export const isLocKeyEqualNormalized = <
+  L1 extends string,
+  L2 extends string = never,
+  L3 extends string = never,
+  L4 extends string = never,
+  L5 extends string = never
+>(a: LocKey<L1 | L2 | L3 | L4 | L5>, b: LocKey<L1 | L2 | L3 | L4 | L5>): boolean => {
+  logger.trace('isLocKeyEqualNormalized', { a, b });
+  return a && b &&
+    normalizeKeyValue(a.lk) === normalizeKeyValue(b.lk) &&
+    a.kt === b.kt;
+};
+
+export const isComKeyEqualNormalized = <
+  S extends string,
+  L1 extends string = never,
+  L2 extends string = never,
+  L3 extends string = never,
+  L4 extends string = never,
+  L5 extends string = never
+>(a: ComKey<S, L1, L2, L3, L4, L5>, b: ComKey<S, L1, L2, L3, L4, L5>): boolean => {
+  logger.trace('isComKeyEqualNormalized', { a, b });
+  if (a && b && isPriKeyEqualNormalized({ kt: a.kt, pk: a.pk } as PriKey<S>, { kt: b.kt, pk: b.pk } as PriKey<S>)) {
+    if (a.loc.length === b.loc.length) {
+      for (let i = 0; i < a.loc.length; i++) {
+        if (!isLocKeyEqualNormalized<L1, L2, L3, L4, L5>(a.loc[i], b.loc[i])) {
+          return false;
+        }
+      }
+      return true;
+    } else {
+      return false;
+    }
+  } else {
+    return false;
+  }
+};
+
+export const isItemKeyEqualNormalized = <
+  S extends string,
+  L1 extends string = never,
+  L2 extends string = never,
+  L3 extends string = never,
+  L4 extends string = never,
+  L5 extends string = never
+>(a: ComKey<S, L1, L2, L3, L4, L5> | PriKey<S>, b: ComKey<S, L1, L2, L3, L4, L5> | PriKey<S>): boolean => {
+  logger.trace('isItemKeyEqualNormalized', { a, b });
+  if (isComKey(a) && isComKey(b)) {
+    return isComKeyEqualNormalized(a as ComKey<S, L1, L2, L3, L4, L5>, b as ComKey<S, L1, L2, L3, L4, L5>);
+  } else if (isPriKey(a) && isPriKey(b)) {
+    if (isComKey(a) || isComKey(b)) {
+      return false;
+    } else {
+      return isPriKeyEqualNormalized(a as PriKey<S>, b as PriKey<S>);
+    }
+  } else {
+    return false;
+  }
+};
+
+// Original comparison functions (kept for backward compatibility)
 export const isItemKeyEqual = <
   S extends string,
   L1 extends string = never,
@@ -31,7 +139,7 @@ export const isItemKeyEqual = <
   } else {
     return false;
   }
-}
+};
 
 export const isPriKeyEqual = <
   S extends string,
@@ -135,13 +243,13 @@ export const generateKeyArray = <
 
 // TODO: Exactly the same as in ContainedItemLib
 export const constructPriKey = <S extends string>(
-  pk: string | PriKey<S>,
+  pk: string | number | PriKey<S>,
   kt: S,
 ) => {
   logger.trace('constructPriKey', { pk, kt });
   let pri: PriKey<S>;
-  if (typeof pk === 'string') {
-    pri = { kt: kt as S, pk: pk as UUID };
+  if (typeof pk === 'string' || typeof pk === 'number') {
+    pri = { kt: kt as S, pk: pk };
   } else {
     pri = pk;
   }
