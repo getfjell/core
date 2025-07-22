@@ -564,15 +564,15 @@ Please check back soon for comprehensive content.`
                         return (
                           <button
                             className="code-example-link"
-                                                         onClick={async () => {
-                                                           try {
-                                                             const response = await fetch(href.startsWith('/') ? `/core${href}` : `/core/${href}`)
-                                                             if (response.ok) {
-                                                               const code = await response.text()
-                                                               // Create a modal or section to display the code
-                                                               const codeSection = document.createElement('div')
-                                                               codeSection.className = 'code-example-modal'
-                                                               codeSection.innerHTML = `
+                            onClick={async () => {
+                              try {
+                                const response = await fetch(href.startsWith('/') ? `/core${href}` : `/core/${href}`)
+                                if (response.ok) {
+                                  const code = await response.text()
+                                  // Create a modal or section to display the code
+                                  const codeSection = document.createElement('div')
+                                  codeSection.className = 'code-example-modal'
+                                  codeSection.innerHTML = `
                                     <div class="code-example-content">
                                       <div class="code-example-header">
                                         <h3>${href}</h3>
@@ -581,14 +581,14 @@ Please check back soon for comprehensive content.`
                                       <pre><code class="language-typescript">${code}</code></pre>
                                     </div>
                                   `
-                                                               document.body.appendChild(codeSection)
-                                                             } else {
-                                                               console.error('Failed to load code example:', href)
-                                                             }
-                                                           } catch (error) {
-                                                             console.error('Error loading code example:', error)
-                                                           }
-                                                         }}
+                                  document.body.appendChild(codeSection)
+                                } else {
+                                  console.error('Failed to load code example:', href)
+                                }
+                              } catch (error) {
+                                console.error('Error loading code example:', error)
+                              }
+                            }}
                             style={{
                               background: 'none',
                               border: 'none',
@@ -598,7 +598,6 @@ Please check back soon for comprehensive content.`
                               padding: 0,
                               font: 'inherit'
                             }}
-                            {...props}
                           >
                             {children}
                           </button>
