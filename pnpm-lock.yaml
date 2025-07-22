@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@fjell/logging':
-        specifier: link:../fjell-logging
-        version: link:../fjell-logging
+        specifier: ^4.4.12
+        version: 4.4.12
       deepmerge:
         specifier: ^4.3.1
         version: 4.3.1
@@ -296,6 +296,9 @@ packages:
     peerDependencies:
       eslint: ^9.0.0
       typescript: ^5.0.0
+
+  '@fjell/logging@4.4.12':
+    resolution: {integrity: sha512-p++UGxt8MPDHN95M4p8crEK9VhmckvasiwBK8vq6EaoP+tIONO11rCYLhS/qFjUc8dCzMPp48Z9SfJhAGiFljQ==}
 
   '@humanfs/core@0.19.1':
     resolution: {integrity: sha512-5DyQ4+1JEUzejeK1JGICcideyfUbGixgS9jNgex5nqkW+cY7WZhxBigmieN5Qnw9ZosSNVC9KQKyb+GUaGyKUA==}
@@ -1833,6 +1836,8 @@ snapshots:
       typescript: 5.8.3
     transitivePeerDependencies:
       - supports-color
+
+  '@fjell/logging@4.4.12': {}
 
   '@humanfs/core@0.19.1': {}
 
