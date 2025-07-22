@@ -1,4 +1,3 @@
-/* eslint-disable max-lines */
 
 import { IQFactory } from '@/item/IQFactory';
 import { abbrevQuery, isQueryMatch, paramsToQuery, queryToParams } from '@/item/IQUtils';
