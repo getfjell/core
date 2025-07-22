@@ -4,10 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-overrides:
-  '@fjell/eslint-config': link:../fjell-eslint-config
-  '@fjell/logging': link:../fjell-logging
-
 importers:
 
   .:
