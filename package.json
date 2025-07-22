@@ -26,14 +26,14 @@
     "prepublishOnly": "pnpm run clean && pnpm run build"
   },
   "dependencies": {
-    "@fjell/logging": "link:../fjell-logging",
+    "@fjell/logging": "^4.4.13",
     "deepmerge": "^4.3.1",
     "luxon": "^3.7.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.31.0",
-    "@fjell/eslint-config": "link:../fjell-eslint-config",
+    "@fjell/eslint-config": "^1.0.5",
     "@swc/core": "^1.13.1",
     "@tsconfig/recommended": "^1.0.10",
     "@types/luxon": "^3.6.2",
