@@ -21,3 +21,10 @@ vite.config.ts
 pnpm-lock.yaml
 pnpm-workspace.yaml
 eslint.config.mjs
+examples/
+docs/
+README.md
+vitest.config.ts
+build.js
+esbuild.config.js
+generate-types.js
