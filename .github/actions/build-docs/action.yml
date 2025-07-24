@@ -7,23 +7,7 @@ runs:
     - name: Build documentation site
       shell: bash
       run: |
-        # Change to docs directory and install dependencies
+        # Change to docs directory, install dependencies and build
         cd docs
         npm install
-
-        # Copy README.md to public directory so it can be fetched
-        mkdir -p public
-        cp ../README.md public/
-
-        # Copy examples README as examples-README.md
-        cp ../examples/README.md public/examples-README.md
-
-        # Copy example files to public directory
-        mkdir -p public/examples
-        cp ../examples/*.ts public/examples/
-
-        # Copy package.json for version info
-        cp ../package.json public/
-
-        # Build the Vite documentation site
         npm run build
