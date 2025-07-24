@@ -7,25 +7,29 @@
     "fjell"
   ],
   "license": "Apache-2.0",
-  "main": "./dist/cjs/index.js",
-  "module": "./dist/esm/index.js",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "require": "./dist/cjs/index.js",
-      "import": "./dist/esm/index.js"
+      "import": "./dist/index.js"
     }
   },
   "type": "module",
   "scripts": {
     "lint": "eslint . --ext .ts --fix",
-    "dev": "concurrently \"tsc --noEmit --watch\" \"vite build --watch\"",
-    "build": "pnpm run lint && tsc --noEmit && vite build",
+    "dev": "concurrently \"tsc --noEmit --watch\" \"node esbuild.config.js --watch\"",
+    "build": "pnpm run lint && tsc --noEmit && node esbuild.config.js && node generate-types.js",
     "clean": "rimraf dist",
     "test": "pnpm run lint && vitest run --coverage",
-    "prepublishOnly": "pnpm run clean && pnpm run build"
+    "prepublishOnly": "pnpm run clean && pnpm run build",
+    "docs:dev": "cd docs && pnpm run dev",
+    "docs:build": "cd docs && pnpm run build",
+    "docs:preview": "cd docs && pnpm run preview",
+    "docs:test": "cd docs && pnpm run test"
   },
   "dependencies": {
+    "@fjell/docs-template": "link:../fjell-docs-template",
     "@fjell/logging": "^4.4.13",
     "deepmerge": "^4.3.1",
     "luxon": "^3.7.1"
@@ -41,12 +45,10 @@
     "@typescript-eslint/parser": "^8.38.0",
     "@vitest/coverage-v8": "3.2.4",
     "concurrently": "^9.2.0",
+    "esbuild": "^0.24.2",
     "eslint": "^9.31.0",
     "rimraf": "^6.0.1",
     "typescript": "^5.8.3",
-    "vite": "^7.0.5",
-    "vite-plugin-dts": "^4.5.4",
-    "vite-plugin-node": "^7.0.0",
     "vitest": "3.2.4"
   },
   "packageManager": "pnpm@10.13.1",
