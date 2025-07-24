@@ -1,0 +1,29 @@
+name: 'Build Documentation'
+description: 'Build the Vite documentation site with all required assets'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Build documentation site
+      shell: bash
+      run: |
+        # Change to docs directory and install dependencies
+        cd docs
+        pnpm install --frozen-lockfile
+
+        # Copy README.md to public directory so it can be fetched
+        mkdir -p public
+        cp ../README.md public/
+
+        # Copy examples README as examples-README.md
+        cp ../examples/README.md public/examples-README.md
+
+        # Copy example files to public directory
+        mkdir -p public/examples
+        cp ../examples/*.ts public/examples/
+
+        # Copy package.json for version info
+        cp ../package.json public/
+
+        # Build the Vite documentation site
+        pnpm run build
