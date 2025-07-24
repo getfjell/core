@@ -9,7 +9,7 @@ runs:
       run: |
         # Change to docs directory and install dependencies
         cd docs
-        pnpm install --frozen-lockfile
+        npm install
 
         # Copy README.md to public directory so it can be fetched
         mkdir -p public
@@ -26,4 +26,4 @@ runs:
         cp ../package.json public/
 
         # Build the Vite documentation site
-        pnpm run build
+        npm run build
