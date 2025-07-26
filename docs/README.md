@@ -8,8 +8,8 @@ To run the documentation site locally:
 
 ```bash
 cd docs
-pnpm install
-pnpm run dev
+npm install
+npm run dev
 ```
 
 The site will be available at `http://localhost:5173`.
@@ -19,7 +19,7 @@ The site will be available at `http://localhost:5173`.
 To build the documentation site:
 
 ```bash
-pnpm run build
+npm run build
 ```
 
 The built site will be in the `dist` directory.
