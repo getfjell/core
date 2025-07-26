@@ -33,4 +33,4 @@ coverage
 .env.test.local
 .env.production.local
 package-lock.json
-pnpm-lock.yaml
+package-lock.json
