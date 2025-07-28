@@ -1,4 +1,4 @@
-import { IQFactory } from '@/item/IQFactory';
+import { IQFactory } from '../../src/item/IQFactory';
 import { describe, expect, test } from 'vitest';
 
 describe('Testing IQFactory', () => {

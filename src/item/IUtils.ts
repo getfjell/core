@@ -1,10 +1,10 @@
 /* eslint-disable indent */
  
-import { Item } from "@/items";
-import { isComKey, isPriKey, toKeyTypeArray } from "@/key/KUtils";
-import { AllItemTypeArrays, ComKey, PriKey } from "@/keys";
+import { Item } from "../items";
+import { isComKey, isPriKey, toKeyTypeArray } from "../key/KUtils";
+import { AllItemTypeArrays, ComKey, PriKey } from "../keys";
 
-import LibLogger from '@/logger';
+import LibLogger from '../logger';
 
 const logger = LibLogger.get('IUtils');
 
