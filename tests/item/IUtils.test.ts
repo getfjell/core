@@ -1,6 +1,6 @@
-import { isComItem, isPriItem, validateKeys, validatePK } from '@/item/IUtils';
-import { Item } from '@/items';
-import { AllItemTypeArrays, ComKey } from '@/keys';
+import { isComItem, isPriItem, validateKeys, validatePK } from '../../src/item/IUtils';
+import { Item } from '../../src/items';
+import { AllItemTypeArrays, ComKey } from '../../src/keys';
 import { describe, expect, test } from 'vitest';
 
 describe('Testing IUtils', () => {

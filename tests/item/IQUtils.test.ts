@@ -1,9 +1,9 @@
 
-import { IQFactory } from '@/item/IQFactory';
-import { abbrevQuery, isQueryMatch, paramsToQuery, queryToParams } from '@/item/IQUtils';
-import { ItemQuery, QueryParams } from "@/item/ItemQuery";
-import { Item } from '@/items';
-import { ComKey, PriKey } from '@/keys';
+import { IQFactory } from '../../src/item/IQFactory';
+import { abbrevQuery, isQueryMatch, paramsToQuery, queryToParams } from '../../src/item/IQUtils';
+import { ItemQuery, QueryParams } from "../../src/item/ItemQuery";
+import { Item } from '../../src/items';
+import { ComKey, PriKey } from '../../src/keys';
 import * as luxon from 'luxon';
 import { describe, expect, test } from 'vitest';
 describe('Testing IQUtils', () => {

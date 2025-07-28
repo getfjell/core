@@ -1,5 +1,5 @@
-import { AItemService } from "@/AItemService";
-import { AllItemTypeArrays } from "@/keys";
+import { AItemService } from "../src/AItemService";
+import { AllItemTypeArrays } from "../src/keys";
 import { describe, expect, it } from 'vitest';
 
 describe('AItemService', () => {

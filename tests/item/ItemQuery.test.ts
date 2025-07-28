@@ -1,4 +1,4 @@
-import { Condition, ConditionOperator, isCondition, ItemQuery } from '@/item/ItemQuery';
+import { Condition, ConditionOperator, isCondition, ItemQuery } from '../../src/item/ItemQuery';
 import { vi } from 'vitest';
 import { describe, expect, test } from 'vitest';
 

@@ -1,7 +1,7 @@
 import deepmerge from 'deepmerge';
-import { Item } from '@/items';
-import { primaryType } from '@/key/KUtils';
-import { ComKey, PriKey } from '@/keys';
+import { Item } from '../items';
+import { primaryType } from '../key/KUtils';
+import { ComKey, PriKey } from '../keys';
 
 export class IFactory<
   V extends Item<S, L1, L2, L3, L4, L5>,

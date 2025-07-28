@@ -23,8 +23,8 @@ import {
   locKeyArrayToItemKey,
   primaryType,
   toKeyTypeArray
-} from '@/key/KUtils';
-import { ComKey, LocKey, LocKeyArray, PriKey } from '@/keys';
+} from '../../src/key/KUtils';
+import { ComKey, LocKey, LocKeyArray, PriKey } from '../../src/keys';
 import { describe, expect, it } from 'vitest';
 
 describe('KUtils', () => {

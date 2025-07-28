@@ -1,4 +1,4 @@
-import { References } from '@/items';
+import { References } from '../items';
 
 export type QueryParams = Record<string, string | number | boolean | Date>;
 

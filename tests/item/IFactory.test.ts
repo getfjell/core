@@ -1,6 +1,6 @@
-import { IFactory } from '@/item/IFactory';
-import { Item } from '@/items';
-import { PriKey } from '@/keys';
+import { IFactory } from '../../src/item/IFactory';
+import { Item } from '../../src/items';
+import { PriKey } from '../../src/keys';
 import { describe, expect, test } from 'vitest';
 
 describe('Testing IFactory', () => {

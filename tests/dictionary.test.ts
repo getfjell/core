@@ -1,4 +1,4 @@
-import { Dictionary } from "@/dictionary";
+import { Dictionary } from "../src/dictionary";
 import { beforeEach, describe, expect, test } from 'vitest';
 
 describe('Dictionary', () => {

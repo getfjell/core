@@ -1,4 +1,4 @@
-import { cPK } from '@/key/KUtils';
+import { cPK } from '../key/KUtils';
 import {
   CompoundType,
   Condition,
