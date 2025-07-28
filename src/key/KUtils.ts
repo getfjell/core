@@ -4,9 +4,9 @@ import {
   LocKey,
   LocKeyArray,
   PriKey
-} from "@/keys";
+} from "../keys";
 
-import LibLogger from "@/logger";
+import LibLogger from "../logger";
 
 const logger = LibLogger.get('KUtils');
 
