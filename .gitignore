@@ -44,3 +44,5 @@ RELEASE_NOTES.md
 input/
 output/
 processed/
+
+.kodrdriv-link-backup.json
