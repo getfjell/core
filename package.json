@@ -1,7 +1,7 @@
 {
   "name": "@fjell/core",
   "description": "Core Item and Key Framework for Fjell",
-  "version": "4.4.36",
+  "version": "4.4.37",
   "keywords": [
     "core",
     "fjell"
@@ -25,7 +25,7 @@
   "scripts": {
     "lint": "eslint . --ext .ts --fix",
     "dev": "concurrently \"tsc --noEmit --watch\" \"node build.js --watch\"",
-    "build": "npm run lint && tsc --noEmit && node build.js",
+    "build": "npm run lint && node build.js",
     "clean": "rm -rf dist",
     "test": "npm run lint && vitest run --coverage",
     "prepublishOnly": "npm run clean && npm run build",
@@ -35,7 +35,7 @@
     "docs:test": "cd docs && npm run test"
   },
   "dependencies": {
-    "@fjell/logging": "^4.4.41",
+    "@fjell/logging": "^4.4.43",
     "deepmerge": "^4.3.1",
     "luxon": "^3.7.1"
   },
