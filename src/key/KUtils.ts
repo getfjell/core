@@ -266,7 +266,7 @@ export const toKeyTypeArray = <
   L3 extends string = never,
   L4 extends string = never,
   L5 extends string = never
->(ik: PriKey<S> | ComKey<S, L1, L2, L3, L4, L5>):
+>(ik: ComKey<S, L1, L2, L3, L4, L5> | PriKey<S>):
   string[] => {
   logger.trace('toKeyTypeArray', { ik });
   if (isComKey(ik)) {
@@ -274,6 +274,35 @@ export const toKeyTypeArray = <
     return [ck.kt, ...ck.loc.map((l: LocKey<L1 | L2 | L3 | L4 | L5>) => l.kt)];
   } else {
     return [(ik as PriKey<S>).kt];
+  }
+}
+
+/**
+ * Extracts key type arrays from any key type (PriKey, ComKey, or LocKeyArray)
+ * This is useful for cache invalidation and registry lookups
+ */
+export const extractKeyTypeArray = <
+  S extends string,
+  L1 extends string = never,
+  L2 extends string = never,
+  L3 extends string = never,
+  L4 extends string = never,
+  L5 extends string = never
+>(key: ComKey<S, L1, L2, L3, L4, L5> | PriKey<S> | LocKeyArray<L1, L2, L3, L4, L5>):
+  string[] => {
+  logger.trace('extractKeyTypeArray', { key });
+
+  if (isComKey(key)) {
+    const ck = key as ComKey<S, L1, L2, L3, L4, L5>;
+    return [ck.kt, ...ck.loc.map((l: LocKey<L1 | L2 | L3 | L4 | L5>) => l.kt)];
+  } else if (isPriKey(key)) {
+    return [(key as PriKey<S>).kt];
+  } else if (Array.isArray(key)) {
+    // This is a LocKeyArray
+    return key.map(locKey => locKey.kt);
+  } else {
+    logger.warning('extractKeyTypeArray: Unknown key type', { key });
+    return [];
   }
 }
 
