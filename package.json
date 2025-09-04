@@ -1,7 +1,7 @@
 {
   "name": "@fjell/core",
   "description": "Core Item and Key Framework for Fjell",
-  "version": "4.4.40",
+  "version": "4.4.41",
   "keywords": [
     "core",
     "fjell"
@@ -35,14 +35,14 @@
     "docs:test": "cd docs && npm run test"
   },
   "dependencies": {
-    "@fjell/logging": "^4.4.45",
+    "@fjell/logging": "^4.4.46",
     "deepmerge": "^4.3.1",
     "luxon": "^3.7.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.32.0",
-    "@fjell/eslint-config": "^1.1.23",
+    "@fjell/eslint-config": "^1.1.24",
     "@swc/core": "^1.13.2",
     "@tsconfig/recommended": "^1.0.10",
     "@types/luxon": "^3.6.2",
