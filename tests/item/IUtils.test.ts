@@ -61,7 +61,7 @@ describe('Testing IUtils', () => {
     });
 
     test('should throw error if item is undefined', () => {
-      // eslint-disable-next-line no-undefined
+       
       const undefinedItem = undefined as unknown as Item<'test'>;
       expect(() => validatePK(undefinedItem, 'test')).toThrow('Validating PK, Item is undefined');
     });
