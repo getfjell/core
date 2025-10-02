@@ -1,5 +1,4 @@
-
-/* eslint-disable no-undefined */
+ 
 import {
   abbrevIK,
   abbrevLKA,
