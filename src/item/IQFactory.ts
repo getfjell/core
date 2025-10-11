@@ -82,7 +82,7 @@ export class IQFactory {
       this.query.refs = {};
     }
     const refName = name || kt;
-    this.query.refs[refName] = cPK<string>(pk, kt);
+    this.query.refs[refName] = { key: cPK<string>(pk, kt) };
     return this;
   }
 
