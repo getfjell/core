@@ -126,7 +126,7 @@ describe('Testing IQFactory', () => {
     test('Query with pk', () => {
       const iqFactory = IQFactory.pk('turbo', '1-1-1-1-1');
 
-      const expected = { refs: { turbo: { kt: 'turbo', pk: '1-1-1-1-1' } } };
+      const expected = { refs: { turbo: { key: { kt: 'turbo', pk: '1-1-1-1-1' } } } };
       expect(iqFactory.toQuery()).toStrictEqual(expected);
     });
   });
