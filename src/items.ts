@@ -46,23 +46,32 @@ export interface Deletable extends Partial<Evented> {
 
 export type ManagedEvents = Timestamped & Deletable;
 
-export type References = Record<
-  string,
-  ComKey<string, string | never, string | never, string | never, string | never, string | never> |
-  PriKey<string>
->;
+export type Reference<S extends string,
+  L1 extends string = never,
+  L2 extends string = never,
+  L3 extends string = never,
+  L4 extends string = never,
+  L5 extends string = never
+> = { key: ComKey<S, L1, L2, L3, L4, L5> | PriKey<S>, item?: Item<S, L1, L2, L3, L4, L5> };
 
-export type ReferenceItem<
+export type ReferenceItem<S extends string,
+  L1 extends string = never,
+  L2 extends string = never,
+  L3 extends string = never,
+  L4 extends string = never,
+  L5 extends string = never
+> = Reference<S, L1, L2, L3, L4, L5>;
+
+export type References = Record<string, Reference<any, any, any, any, any, any>>;
+
+export type Aggregation<
   S extends string,
   L1 extends string = never,
   L2 extends string = never,
   L3 extends string = never,
   L4 extends string = never,
   L5 extends string = never
-> = { key: ComKey<S, L1, L2, L3, L4, L5> | PriKey<S>, item: Item<S, L1, L2, L3, L4, L5> };
-
-export type ReferenceItems = Record<
-  string, ReferenceItem<string, string | never, string | never, string | never, string | never, string | never>>;
+> = { key: ComKey<S, L1, L2, L3, L4, L5> | PriKey<S>, item?: Item<S, L1, L2, L3, L4, L5> };
 
 export interface Item<S extends string = never,
   L1 extends string = never,
@@ -72,8 +81,8 @@ export interface Item<S extends string = never,
   L5 extends string = never> extends Identified<S, L1, L2, L3, L4, L5> {
   events: ManagedEvents & Evented;
   // TODO: This is a bit of a hack to get around the fact that we don't want to pass all these generics
-  aggs?: ReferenceItems;
-  refs?: References;
+  aggs?: Record<string, Aggregation<any, any, any, any, any, any>[]>;
+  refs?: Record<string, Reference<any, any, any, any, any, any>>;
   [key: string]: any
 }
 
