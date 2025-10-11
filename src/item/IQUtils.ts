@@ -1,4 +1,4 @@
-import { Item, ReferenceItem, References } from "../items";
+import { Item, Reference, ReferenceItem, References } from "../items";
 import { isItemKeyEqual, isPriKey } from "../key/KUtils";
 import { ComKey, PriKey } from "../keys";
 import LibLogger from "../logger";
@@ -103,7 +103,10 @@ const isRefQueryMatch =
   ): boolean => {
     logger.trace('doesRefMatch', { queryRef, references });
     logger.debug('Comparing Ref', { refKey, itemRef: references[refKey], queryRef });
-    return isItemKeyEqual(queryRef, references[refKey]);
+    if (!references[refKey]) {
+      return false;
+    }
+    return isItemKeyEqual(queryRef, references[refKey].key);
   }
 
 const isCompoundConditionQueryMatch = <
@@ -207,6 +210,9 @@ const isAggQueryMatch = <
   const aggItem = agg.item;
   logger.debug('Comparing Agg', { aggKey, aggItem, aggQuery });
   // Fancy, right?  This is a recursive call to isQueryMatch
+  if (!aggItem) {
+    return false;
+  }
   return isQueryMatch(aggItem, aggQuery);
 }
 
@@ -257,7 +263,7 @@ export const isQueryMatch = <
   if (query.refs && item.refs) {
     for (const key in query.refs) {
       const queryRef = query.refs[key];
-      if (!isRefQueryMatch(key, queryRef, item.refs)) return false;
+      if (!isRefQueryMatch(key, queryRef.key, item.refs)) return false;
     }
   } else if (query.refs && !item.refs) {
     logger.debug('Query contains refs but item does not have refs', { query, item });
@@ -279,9 +285,21 @@ export const isQueryMatch = <
   if (query.aggs && item.aggs) {
     for (const key in query.aggs) {
       const aggQuery = query.aggs[key];
-      if (item.aggs[key] && !isAggQueryMatch(key, aggQuery, item.aggs[key])) return false;
+      // aggs is a record where each key maps to an array of aggregations
+      if (item.aggs[key]) {
+        let hasMatch = false;
+        for (const aggRecord of item.aggs[key]) {
+          if (isAggQueryMatch(key, aggQuery, aggRecord as ReferenceItem<any, any, any, any, any, any>)) {
+            hasMatch = true;
+            break;
+          }
+        }
+        if (!hasMatch) return false;
+      } else {
+        return false;
+      }
     }
-  } if (query.aggs && !item.aggs) {
+  } else if (query.aggs && !item.aggs) {
     logger.debug('Query contains aggs but item does not have aggs', { query, item });
     return false;
   }
@@ -332,12 +350,12 @@ export const abbrevRef = <
   L3 extends string = never,
   L4 extends string = never,
   L5 extends string = never
->(key: string, ref: ComKey<S, L1, L2, L3, L4, L5> | PriKey<S>): string => {
-  if (isPriKey(ref)) {
-    const priKey = ref as PriKey<S>;
+>(key: string, ref: Reference<S, L1, L2, L3, L4, L5>): string => {
+  if (isPriKey(ref.key)) {
+    const priKey = ref.key as PriKey<S>;
     return `R(${key},${priKey.kt},${priKey.pk})`;
   } else {
-    const comKey = ref as ComKey<S, L1, L2, L3, L4, L5>;
+    const comKey = ref.key as ComKey<S, L1, L2, L3, L4, L5>;
     return `R(${key},${JSON.stringify(comKey)})`;
   }
 }

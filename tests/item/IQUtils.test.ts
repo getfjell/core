@@ -204,8 +204,8 @@ describe('Testing IQUtils', () => {
       key: { kt: 'test', pk: '2-2-2-2-2' },
       turnip: 3,
       refs: {
-        turbo: profileKey,
-        motor: { kt: 'motor', pk: '3-3-3-3-3' },
+        turbo: { key: profileKey },
+        motor: { key: { kt: 'motor', pk: '3-3-3-3-3' } },
       },
       events: {
         created: { at: nowDate },
@@ -213,10 +213,10 @@ describe('Testing IQUtils', () => {
         updated: { at: nowDate },
       },
       aggs: {
-        tested: {
+        tested: [{
           key: { kt: 'test', pk: '2-2-2-2-2' },
           item: aggItem,
-        },
+        }]
       }
     };
 
@@ -557,9 +557,11 @@ describe('Testing IQUtils', () => {
       const query: ItemQuery = {
         refs: {
           test: {
-            kt: 'test', pk: '123-456',
-            loc: [{ kt: 'loc', lk: '123-456' }]
-          } as ComKey<'test', 'loc'>
+            key: {
+              kt: 'test', pk: '123-456',
+              loc: [{ kt: 'loc', lk: '123-456' }]
+            } as ComKey<'test', 'loc'>
+          }
         }
       };
 
