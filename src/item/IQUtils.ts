@@ -158,6 +158,20 @@ const isConditionQueryMatch = <
     return false;
   }
   logger.debug('Comparing Condition', { propKey, itemProp: item[propKey], queryCondition });
+  
+  // Handle null values - only == and != make sense with null
+  if (queryCondition.value === null) {
+    if (queryCondition.operator === '==') {
+      return item[propKey] === null;
+    } else if (queryCondition.operator === '!=') {
+      return item[propKey] !== null;
+    } else {
+      throw new Error(
+        `Operator ${queryCondition.operator} cannot be used with null value. Use '==' for null checks or '!=' for not-null checks.`
+      );
+    }
+  }
+  
   let result = false;
   switch (queryCondition.operator) {
     case '==':

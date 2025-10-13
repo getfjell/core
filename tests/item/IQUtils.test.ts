@@ -272,6 +272,55 @@ describe('Testing IQUtils', () => {
         const result = isQueryMatch(item, query);
         expect(result).toBe(false);
       });
+
+      test('testing null prop query - value is null and condition checks for null', () => {
+        const itemWithNull: Item<'test'> = {
+          key: { kt: 'test', pk: '1-1-1-1-1' },
+          events: {
+            created: { at: nowDate },
+            deleted: { at: null },
+            updated: { at: nowDate },
+          },
+          nullProp: null,
+        };
+        const query: ItemQuery = IQFactory.condition('nullProp', null, '==').toQuery();
+        const result = isQueryMatch(itemWithNull, query);
+        expect(result).toBe(true);
+      });
+
+      test('testing null prop query - value is not null but condition checks for null', () => {
+        const query: ItemQuery = IQFactory.condition('turnip', null, '==').toQuery();
+        const result = isQueryMatch(item, query);
+        expect(result).toBe(false);
+      });
+
+      test('testing not-null prop query - value is null but condition checks for not-null', () => {
+        const itemWithNull: Item<'test'> = {
+          key: { kt: 'test', pk: '1-1-1-1-1' },
+          events: {
+            created: { at: nowDate },
+            deleted: { at: null },
+            updated: { at: nowDate },
+          },
+          nullProp: null,
+        };
+        const query: ItemQuery = IQFactory.condition('nullProp', null, '!=').toQuery();
+        const result = isQueryMatch(itemWithNull, query);
+        expect(result).toBe(false);
+      });
+
+      test('testing not-null prop query - value is not null and condition checks for not-null', () => {
+        const query: ItemQuery = IQFactory.condition('turnip', null, '!=').toQuery();
+        const result = isQueryMatch(item, query);
+        expect(result).toBe(true);
+      });
+
+      test('testing null with invalid operator throws error', () => {
+        const query: ItemQuery = IQFactory.condition('turnip', null as any, '>').toQuery();
+        expect(() => isQueryMatch(item, query)).toThrow(
+          'Operator > cannot be used with null value. Use \'==\' for null checks or \'!=\' for not-null checks.'
+        );
+      });
     });
 
     describe('Testing event query match', () => {

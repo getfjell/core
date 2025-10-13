@@ -88,7 +88,7 @@ export class IQFactory {
 
   public condition(
     column: string,
-    value: string[] | string | number[] | number | boolean | Date,
+    value: string[] | string | number[] | number | boolean | Date | null,
     operator: ConditionOperator = '==',
   ) {
     const condition: Condition = { column, value, operator };
@@ -145,7 +145,7 @@ export class IQFactory {
 
   public static condition(
     column: string,
-    value: string[] | string | number[] | number | boolean | Date,
+    value: string[] | string | number[] | number | boolean | Date | null,
     operator: ConditionOperator = '=='
   ) {
     const iqFactory = new IQFactory();
