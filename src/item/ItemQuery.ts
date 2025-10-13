@@ -14,7 +14,7 @@ export type ConditionOperator =
  */
 export type Condition = {
   column: string,
-  value: string[] | string | number[] | number | boolean | Date,
+  value: string[] | string | number[] | number | boolean | Date | null,
   operator: ConditionOperator,
 };
 
@@ -55,7 +55,8 @@ export const isCondition = (condition: any): condition is Condition => {
     typeof condition.value === 'string' ||
     typeof condition.value === 'number' ||
     typeof condition.value === 'boolean' ||
-    condition.value instanceof Date
+    condition.value instanceof Date ||
+    condition.value === null
   ) && (condition.operator ? typeof condition.operator === 'string' : true);
 }
 

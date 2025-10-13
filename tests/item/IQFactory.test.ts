@@ -94,18 +94,78 @@ describe('Testing IQFactory', () => {
       expect(iqFactory.toQuery()).toStrictEqual(expected);
     });
 
-    test('Query with invalid props throws error', () => {
-      expect(() => {
-        // @ts-ignore
-        IQFactory.condition('yimby', null, '==');
-      }).toThrow('Invalid condition: {\"column\":\"yimby\",\"value\":null,\"operator\":\"==\"}');
+    test('Query with null value works', () => {
+      const iqFactory = IQFactory.condition('yimby', null, '==');
+
+      const expected = {
+        compoundCondition: {
+          compoundType: 'AND',
+          conditions: [{ column: 'yimby', value: null, operator: '==' }],
+        },
+      };
+      expect(iqFactory.toQuery()).toStrictEqual(expected);
     });
 
-    test('Query with invalid props throws error', () => {
-      expect(() => {
-        // @ts-ignore
-        IQFactory.conditions([{ column: 'yimby', value: null, operator: '==' }]);
-      }).toThrow('Invalid condition: {\"column\":\"yimby\",\"value\":null,\"operator\":\"==\"}');
+    test('Query with null value in conditions array works', () => {
+      const iqFactory = IQFactory.conditions([{ column: 'yimby', value: null, operator: '==' }]);
+
+      const expected = {
+        compoundCondition: {
+          compoundType: 'AND',
+          conditions: [{ column: 'yimby', value: null, operator: '==' }],
+        },
+      };
+      expect(iqFactory.toQuery()).toStrictEqual(expected);
+    });
+
+    test('Query with null value using != operator', () => {
+      const iqFactory = IQFactory.condition('yimby', null, '!=');
+
+      const expected = {
+        compoundCondition: {
+          compoundType: 'AND',
+          conditions: [{ column: 'yimby', value: null, operator: '!=' }],
+        },
+      };
+      expect(iqFactory.toQuery()).toStrictEqual(expected);
+    });
+
+    test('Query with multiple conditions including null', () => {
+      const iqFactory = IQFactory.conditions([
+        { column: 'name', value: 'test', operator: '==' },
+        { column: 'deletedAt', value: null, operator: '==' },
+        { column: 'status', value: 'active', operator: '==' }
+      ]);
+
+      const expected = {
+        compoundCondition: {
+          compoundType: 'AND',
+          conditions: [
+            { column: 'name', value: 'test', operator: '==' },
+            { column: 'deletedAt', value: null, operator: '==' },
+            { column: 'status', value: 'active', operator: '==' }
+          ],
+        },
+      };
+      expect(iqFactory.toQuery()).toStrictEqual(expected);
+    });
+
+    test('Query with chained conditions including null', () => {
+      const iqFactory = IQFactory.condition('name', 'test')
+        .condition('deletedAt', null, '==')
+        .condition('active', true);
+
+      const expected = {
+        compoundCondition: {
+          compoundType: 'AND',
+          conditions: [
+            { column: 'name', value: 'test', operator: '==' },
+            { column: 'deletedAt', value: null, operator: '==' },
+            { column: 'active', value: true, operator: '==' }
+          ],
+        },
+      };
+      expect(iqFactory.toQuery()).toStrictEqual(expected);
     });
 
     test('Query for condition with default operator non-static', () => {
