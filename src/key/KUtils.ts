@@ -382,7 +382,9 @@ export const itemKeyToLocKeyArray =
     let lka: Array<LocKey<L1 | L2 | L3 | L4 | L5>> = [];
     if (isComKey(ik)) {
       const ck = ik as ComKey<S, L1, L2, L3, L4, L5>;
-      lka = [{ kt: ck.kt, lk: ck.pk } as unknown as LocKey<L1 | L2 | L3 | L4 | L5>, ...ck.loc];
+      // Location arrays should be ordered from parent to child (root to leaf)
+      // So parent locations come first, then the current item
+      lka = [...ck.loc, { kt: ck.kt, lk: ck.pk } as unknown as LocKey<L1 | L2 | L3 | L4 | L5>];
     } else {
       const pk = ik as PriKey<S>;
       lka = [{ kt: pk.kt, lk: pk.pk } as unknown as LocKey<L1 | L2 | L3 | L4 | L5>];
