@@ -359,10 +359,12 @@ describe('KUtils', () => {
         ]
       };
       const result = itemKeyToLocKeyArray(key);
+      // Location arrays should be ordered from parent to child (root to leaf)
+      // So parent locations come first, then the current item
       expect(result).toEqual([
-        { kt: 'typeA', lk: '123-145-156-167-132' },
         { kt: 'typeB', lk: '321-342-353-234-222' },
-        { kt: 'typeC', lk: '111-222-333-444-555' }
+        { kt: 'typeC', lk: '111-222-333-444-555' },
+        { kt: 'typeA', lk: '123-145-156-167-132' }
       ]);
     });
   });
@@ -408,10 +410,12 @@ describe('KUtils', () => {
         ]
       };
       const result = ikToLKA(key);
+      // Location arrays should be ordered from parent to child (root to leaf)
+      // So parent locations come first, then the current item
       expect(result).toEqual([
-        { kt: 'typeA', lk: '123-145-156-167-132' },
         { kt: 'typeB', lk: '321-342-353-234-222' },
-        { kt: 'typeC', lk: '111-222-333-444-555' }
+        { kt: 'typeC', lk: '111-222-333-444-555' },
+        { kt: 'typeA', lk: '123-145-156-167-132' }
       ]);
     });
   });
