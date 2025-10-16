@@ -33,15 +33,14 @@ describe('Location Key Array Ordering - Critical Business Logic', () => {
 
       const locationArray = ikToLKA(employeeKey);
 
-      // CRITICAL: Must be ordered from root to leaf
-      // company (root) -> department (middle) -> employee (leaf)
+      // ikToLKA returns only parent locations (for aggregation queries to find siblings)
+      // company (root) -> department (middle)
       expect(locationArray[0].kt).toBe('company');
       expect(locationArray[1].kt).toBe('department');
-      expect(locationArray[2].kt).toBe('employee');
       
-      // Verify the complete ordering semantically
+      // Verify the complete ordering semantically (child-to-parent hierarchy)
       const keyTypes = locationArray.map(k => k.kt);
-      expect(keyTypes).toEqual(['company', 'department', 'employee']);
+      expect(keyTypes).toEqual(['company', 'department']);
     });
 
     it('should maintain hierarchical order for 3-level nesting', () => {
@@ -57,10 +56,9 @@ describe('Location Key Array Ordering - Critical Business Logic', () => {
 
       const locationArray = ikToLKA(orderStepKey);
 
-      // CRITICAL: Parent (order) must come before child (orderPhase) before grandchild (orderStep)
+      // ikToLKA returns only parent locations (child-to-parent hierarchy)
       expect(locationArray[0].kt).toBe('order');
       expect(locationArray[1].kt).toBe('orderPhase');
-      expect(locationArray[2].kt).toBe('orderStep');
     });
 
     it('should maintain hierarchical order for deep nesting (5 levels)', () => {
@@ -78,9 +76,9 @@ describe('Location Key Array Ordering - Critical Business Logic', () => {
 
       const locationArray = ikToLKA(deepKey);
 
-      // Must be in hierarchical order from root to leaf
+      // ikToLKA returns only parent locations (child-to-parent hierarchy)
       const keyTypes = locationArray.map(k => k.kt);
-      expect(keyTypes).toEqual(['level1', 'level2', 'level3', 'level4', 'level5']);
+      expect(keyTypes).toEqual(['level1', 'level2', 'level3', 'level4']);
     });
   });
 
@@ -99,17 +97,14 @@ describe('Location Key Array Ordering - Critical Business Logic', () => {
       // Convert to location array
       const locationArray = ikToLKA(teamKey);
 
-      // CRITICAL: Location array must be ordered from root to leaf
-      // This is essential for building REST paths and validation
+      // ikToLKA returns only parent locations (child-to-parent hierarchy)
       expect(locationArray[0].kt).toBe('org');      // Root/grandparent
       expect(locationArray[1].kt).toBe('dept');     // Middle/parent
-      expect(locationArray[2].kt).toBe('team');     // Leaf/child
       
-      // Verify the complete structure
+      // Verify the complete structure (parent locations only)
       expect(locationArray).toEqual([
         { kt: 'org', lk: 'org-123' },
-        { kt: 'dept', lk: 'dept-456' },
-        { kt: 'team', lk: 'team-789' }
+        { kt: 'dept', lk: 'dept-456' }
       ]);
     });
 
@@ -126,12 +121,10 @@ describe('Location Key Array Ordering - Critical Business Logic', () => {
 
       const locationArray = ikToLKA(childKey);
 
-      // Parent locations should come before the child
-      // This is CRITICAL for building REST paths like:
-      // /grandparents/{gp-id}/parents/{p-id}/children/{child-id}
+      // ikToLKA returns only parent locations (child-to-parent hierarchy)
+      // This is used for aggregation queries to find siblings at the same location
       expect(locationArray[0].kt).toBe('grandparent');
       expect(locationArray[1].kt).toBe('parent');
-      expect(locationArray[2].kt).toBe('child');
     });
   });
 
@@ -162,19 +155,17 @@ describe('Location Key Array Ordering - Critical Business Logic', () => {
         ]
       };
 
-      // Convert to location array (for use as parent location for orderSteps)
+      // Convert to location array (for use as parent location for aggregation queries)
       const parentLocations = ikToLKA(orderPhaseKey);
 
-      // This will be used to query orderSteps: /orders/{order-123}/orderPhases/{phase-456}/orderSteps
-      // CRITICAL: Parent (order) must come before child (orderPhase)
+      // ikToLKA returns only parent locations (child-to-parent hierarchy)
+      // This is used to find sibling orderPhases at the same location
       expect(parentLocations).toEqual([
-        { kt: 'order', lk: 'order-123' },
-        { kt: 'orderPhase', lk: 'phase-456' }
+        { kt: 'order', lk: 'order-123' }
       ]);
       
       // Verify ordering
       expect(parentLocations[0].kt).toBe('order');
-      expect(parentLocations[1].kt).toBe('orderPhase');
     });
   });
 
@@ -183,7 +174,7 @@ describe('Location Key Array Ordering - Critical Business Logic', () => {
      * This test simulates what client-api does when building REST paths.
      * The location array order directly determines the URL structure.
      */
-    it('should produce location arrays suitable for REST path building', () => {
+    it('should produce location arrays suitable for aggregation queries', () => {
       // Simulating orderStep with parent orderPhase and grandparent order
       const orderStepKey: ComKey<'orderStep', 'order', 'orderPhase'> = {
         pk: 25825,
@@ -196,25 +187,18 @@ describe('Location Key Array Ordering - Critical Business Logic', () => {
 
       const locationArray = ikToLKA(orderStepKey);
 
-      // Expected URL path: /orders/26513/orderPhases/25826/orderSteps/25825
-      // This requires the location array to be in parent-to-child order
+      // ikToLKA returns only parent locations (child-to-parent hierarchy)
+      // This is used for aggregation queries to find sibling orderSteps
       
-      // Simulate path building (simplified version of what client-api does)
-      const pathSegments: string[] = [];
-      for (const loc of locationArray) {
-        pathSegments.push(`${loc.kt}s`); // plural
-        pathSegments.push(String(loc.lk));
-      }
+      // Verify the location array contains only parents in correct order
+      expect(locationArray).toEqual([
+        { kt: 'order', lk: 26513 },
+        { kt: 'orderPhase', lk: 25826 }
+      ]);
       
-      const path = '/' + pathSegments.join('/');
-      
-      // CRITICAL: Path must reflect correct hierarchy
-      expect(path).toBe('/orders/26513/orderPhases/25826/orderSteps/25825');
-      
-      // Verify the ordering matches expected hierarchy
-      expect(pathSegments[0]).toBe('orders');     // Root
-      expect(pathSegments[2]).toBe('orderPhases'); // Middle
-      expect(pathSegments[4]).toBe('orderSteps');  // Leaf
+      // Verify the ordering matches expected hierarchy (child-to-parent)
+      expect(locationArray[0].kt).toBe('order');     // Root
+      expect(locationArray[1].kt).toBe('orderPhase'); // Middle
     });
 
     it('should fail if location array is in wrong order', () => {
@@ -256,25 +240,18 @@ describe('Location Key Array Ordering - Critical Business Logic', () => {
 
       const locationArray = ikToLKA(key);
 
-      // For each level, verify that parents come before children
-      for (let i = 0; i < locationArray.length - 1; i++) {
-        const currentLevel = locationArray[i];
-        
-        // In a correctly ordered array, each level should be the parent of the next
-        // We can't validate the actual parent-child relationship without metadata,
-        // but we can verify the ordering matches the loc array structure
-        
-        // The first elements should match the loc array order
-        if (i < key.loc.length) {
-          expect(currentLevel.kt).toBe(key.loc[i].kt);
-        }
-      }
+      // ikToLKA returns only parent locations (child-to-parent hierarchy)
+      // Verify that the location array matches the loc array exactly
+      expect(locationArray.length).toBe(key.loc.length);
       
-      // The last element should be the primary key
-      expect(locationArray[locationArray.length - 1].kt).toBe(key.kt);
+      for (let i = 0; i < locationArray.length; i++) {
+        // Each element should match the corresponding loc array element
+        expect(locationArray[i].kt).toBe(key.loc[i].kt);
+        expect(locationArray[i].lk).toBe(key.loc[i].lk);
+      }
     });
 
-    it('should always place the item itself as the leaf (last element)', () => {
+    it('should return only parent locations (not the item itself)', () => {
       const key: ComKey<'target', 'ancestor1', 'ancestor2', 'ancestor3'> = {
         pk: 'target-id',
         kt: 'target',
@@ -287,12 +264,10 @@ describe('Location Key Array Ordering - Critical Business Logic', () => {
 
       const locationArray = ikToLKA(key);
 
-      // CRITICAL: The item itself must be the last (leaf) element
-      const lastElement = locationArray[locationArray.length - 1];
-      expect(lastElement.kt).toBe('target');
-      expect(lastElement.lk).toBe('target-id');
+      // ikToLKA returns only parent locations (child-to-parent hierarchy)
+      expect(locationArray.length).toBe(3); // Only parents, not the target itself
       
-      // All ancestors must come before the target
+      // All ancestors in correct order
       expect(locationArray[0].kt).toBe('ancestor1');
       expect(locationArray[1].kt).toBe('ancestor2');
       expect(locationArray[2].kt).toBe('ancestor3');
@@ -313,26 +288,22 @@ describe('Location Key Array Ordering - Critical Business Logic', () => {
 
       const locationArray = ikToLKA(orderStepKey);
 
-      // The error message was:
-      // "Key type \"order\" (index 0) should come before the previous key (index 1)"
-      // This happened because the array was [orderPhase, order, orderStep] - WRONG!
+      // ikToLKA returns only parent locations (child-to-parent hierarchy)
+      // This is used for aggregation queries to find sibling orderSteps
       
-      // CORRECT order must be [order, orderPhase, orderStep]
-      expect(locationArray.length).toBe(3);
+      // CORRECT order: [order, orderPhase] (parents only)
+      expect(locationArray.length).toBe(2);
       expect(locationArray[0]).toEqual({ kt: 'order', lk: 26513 });
       expect(locationArray[1]).toEqual({ kt: 'orderPhase', lk: 25826 });
-      expect(locationArray[2]).toEqual({ kt: 'orderStep', lk: 25825 });
       
-      // Verify ordering by index
+      // Verify ordering by index (child-to-parent hierarchy)
       const orderIndex = 0;
       const orderPhaseIndex = 1;
-      const orderStepIndex = 2;
       
       expect(orderIndex).toBeLessThan(orderPhaseIndex);
-      expect(orderPhaseIndex).toBeLessThan(orderStepIndex);
     });
 
-    it('should work correctly when used as parent locations for contained item queries', () => {
+    it('should work correctly when used as parent locations for aggregation queries', () => {
       // Scenario: We have an order and want to query all its orderPhases
       const orderKey: PriKey<'order'> = {
         pk: 26513,
@@ -341,12 +312,12 @@ describe('Location Key Array Ordering - Critical Business Logic', () => {
 
       const parentLocations = ikToLKA(orderKey);
 
-      // When passed to client-api.all(), it should build: /orders/26513/orderPhases
+      // For a primary key, ikToLKA returns the item itself as a location
       expect(parentLocations).toEqual([
         { kt: 'order', lk: 26513 }
       ]);
 
-      // Now, scenario: We have an orderPhase and want to query all its orderSteps
+      // Now, scenario: We have an orderPhase and want to find sibling orderPhases
       const orderPhaseKey: ComKey<'orderPhase', 'order'> = {
         pk: 25826,
         kt: 'orderPhase',
@@ -355,13 +326,12 @@ describe('Location Key Array Ordering - Critical Business Logic', () => {
         ]
       };
 
-      const parentLocationsForSteps = ikToLKA(orderPhaseKey);
+      const parentLocationsForPhases = ikToLKA(orderPhaseKey);
 
-      // When passed to client-api.all(), it should build: /orders/26513/orderPhases/25826/orderSteps
-      // CRITICAL: Order must be [order, orderPhase] not [orderPhase, order]
-      expect(parentLocationsForSteps).toEqual([
-        { kt: 'order', lk: 26513 },
-        { kt: 'orderPhase', lk: 25826 }
+      // ikToLKA returns only parent locations (child-to-parent hierarchy)
+      // For aggregation queries to find sibling orderPhases at the same location
+      expect(parentLocationsForPhases).toEqual([
+        { kt: 'order', lk: 26513 }
       ]);
     });
   });
@@ -376,9 +346,9 @@ describe('Location Key Array Ordering - Critical Business Logic', () => {
 
       const locationArray = ikToLKA(key);
 
+      // ikToLKA returns only parent locations (child-to-parent hierarchy)
       expect(locationArray).toEqual([
-        { kt: 'parent', lk: 'parent-id' },
-        { kt: 'child', lk: 'child-id' }
+        { kt: 'parent', lk: 'parent-id' }
       ]);
     });
 

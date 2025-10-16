@@ -359,12 +359,12 @@ describe('KUtils', () => {
         ]
       };
       const result = itemKeyToLocKeyArray(key);
-      // Location arrays should be ordered from parent to child (root to leaf)
-      // So parent locations come first, then the current item
+      // For composite keys, return only the parent locations (not the current item)
+      // Location arrays are ordered child-to-parent per KTA hierarchy
+      // This is used for aggregation queries to find sibling items at the same location
       expect(result).toEqual([
         { kt: 'typeB', lk: '321-342-353-234-222' },
-        { kt: 'typeC', lk: '111-222-333-444-555' },
-        { kt: 'typeA', lk: '123-145-156-167-132' }
+        { kt: 'typeC', lk: '111-222-333-444-555' }
       ]);
     });
   });
@@ -410,12 +410,12 @@ describe('KUtils', () => {
         ]
       };
       const result = ikToLKA(key);
-      // Location arrays should be ordered from parent to child (root to leaf)
-      // So parent locations come first, then the current item
+      // For composite keys, return only the parent locations (not the current item)
+      // Location arrays are ordered child-to-parent per KTA hierarchy
+      // This is used for aggregation queries to find sibling items at the same location
       expect(result).toEqual([
         { kt: 'typeB', lk: '321-342-353-234-222' },
-        { kt: 'typeC', lk: '111-222-333-444-555' },
-        { kt: 'typeA', lk: '123-145-156-167-132' }
+        { kt: 'typeC', lk: '111-222-333-444-555' }
       ]);
     });
   });

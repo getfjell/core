@@ -382,9 +382,10 @@ export const itemKeyToLocKeyArray =
     let lka: Array<LocKey<L1 | L2 | L3 | L4 | L5>> = [];
     if (isComKey(ik)) {
       const ck = ik as ComKey<S, L1, L2, L3, L4, L5>;
-      // Location arrays should be ordered from parent to child (root to leaf)
-      // So parent locations come first, then the current item
-      lka = [...ck.loc, { kt: ck.kt, lk: ck.pk } as unknown as LocKey<L1 | L2 | L3 | L4 | L5>];
+      // For composite keys, return only the parent location keys (ck.loc)
+      // Location arrays are ordered child-to-parent per KTA hierarchy: ['child', 'parent', 'grandparent']
+      // This is used for aggregation queries where we want to find sibling items at the same location
+      lka = [...ck.loc];
     } else {
       const pk = ik as PriKey<S>;
       lka = [{ kt: pk.kt, lk: pk.pk } as unknown as LocKey<L1 | L2 | L3 | L4 | L5>];
