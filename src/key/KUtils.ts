@@ -192,13 +192,13 @@ export const isItemKey = (key: any): boolean => {
 export const isComKey = (key: any): boolean => {
   logger.trace('isComKey', { key });
   return key !== undefined &&
-    (key.pk !== undefined && key.kt !== undefined) && (key.loc !== undefined && key.loc.length > 0);
+    (key.pk !== undefined && key.kt !== undefined) && (key.loc !== undefined && Array.isArray(key.loc));
 }
 
 export const isPriKey = (key: any): boolean => {
   logger.trace('isPriKey', { key });
   return key !== undefined &&
-    (key.pk !== undefined && key.kt !== undefined) && (key.loc === undefined || key.loc.length === 0);
+    (key.pk !== undefined && key.kt !== undefined) && (key.loc === undefined);
 }
 
 export const isLocKey = (key: any): boolean => {
