@@ -206,6 +206,15 @@ describe('KUtils', () => {
       expect(isComKey(key)).toBe(true);
     });
 
+    it('should return true for composite key with empty loc array', () => {
+      const key = {
+        pk: '123-145-156-167-132',
+        kt: 'typeA',
+        loc: []
+      };
+      expect(isComKey(key)).toBe(true);
+    });
+
     it('should return false for invalid composite key', () => {
       const key = { pk: '123-145-156-167-132', kt: 'typeA' };
       expect(isComKey(key)).toBe(false);
@@ -216,6 +225,11 @@ describe('KUtils', () => {
     it('should return true for valid primary key', () => {
       const key = { pk: '123-145-156-167-132', kt: 'typeA' };
       expect(isPriKey(key)).toBe(true);
+    });
+
+    it('should return false for key with empty loc array', () => {
+      const key = { pk: '123-145-156-167-132', kt: 'typeA', loc: [] };
+      expect(isPriKey(key)).toBe(false);
     });
 
     it('should return false for invalid primary key', () => {
@@ -969,7 +983,7 @@ describe('KUtils', () => {
       });
 
       it('should throw error for empty location key array', () => {
-        const lka: LocKeyArray<'typeA'> = [];
+        const lka: any = [];
         expect(() => locKeyArrayToItemKey(lka)).toThrow('locKeyArrayToItemKey: lka is undefined or empty');
       });
 
