@@ -16,6 +16,10 @@ export * from './item/ItemQuery';
 // Validation module
 export * from './validation';
 
+// Error types and handling
+export * from './errors';
+export * from './operations';
+
 // Operations interfaces
 export type {
   Operations,
