@@ -24,16 +24,32 @@ export {
   isComKey as isOperationComKey
 } from './operations/Operations';
 export type {
+  GetMethod,
+  CreateMethod,
+  UpdateMethod,
+  RemoveMethod,
+  UpsertMethod,
+  AllMethod,
+  OneMethod,
+  FindMethod,
+  FindOneMethod,
   FinderMethod,
   ActionMethod,
+  ActionOperationMethod,
   AllActionMethod,
+  AllActionOperationMethod,
   FacetMethod,
+  FacetOperationMethod,
   AllFacetMethod,
+  AllFacetOperationMethod,
   OperationsExtensions
 } from './operations/methods';
+// Core architectural patterns
+export type { PrimaryOperations } from './operations/primary';
+export type { ContainedOperations } from './operations/contained';
+
+// UI usage patterns (React providers, etc.)
 export type {
-  PrimaryOperations,
-  ContainedOperations,
   CollectionOperations,
   InstanceOperations
 } from './operations/specialized';
