@@ -48,6 +48,9 @@ export type {
   AllFacetOperationMethod,
   OperationsExtensions
 } from './operations/methods';
+
+// Operation wrappers - automatic validation for all operations
+export * from './operations/wrappers';
 // Core architectural patterns
 export type { PrimaryOperations } from './operations/primary';
 export type { ContainedOperations } from './operations/contained';

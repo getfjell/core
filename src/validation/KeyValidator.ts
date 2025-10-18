@@ -241,6 +241,27 @@ export const validateKey = <
     );
   }
   
+  // Validate that the key's kt field matches the expected primary key type
+  const expectedKeyType = coordinate.kta[0];
+  if ((key as any).kt !== expectedKeyType) {
+    logger.error(`Key type mismatch in ${operation}`, {
+      expected: expectedKeyType,
+      received: (key as any).kt,
+      key,
+      coordinate
+    });
+    
+    throw new Error(
+      `Invalid key type for ${operation} operation.\n` +
+      `\n` +
+      `Expected key type: '${expectedKeyType}'\n` +
+      `Received key type: '${(key as any).kt}'\n` +
+      `\n` +
+      `Example correct usage:\n` +
+      `  library.operations.${operation}({ kt: '${expectedKeyType}', pk: 'item-id', ... })`
+    );
+  }
+  
   // For composite keys, validate the location key array order
   if (keyIsComposite) {
     const comKey = key as ComKey<S, L1, L2, L3, L4, L5>;
