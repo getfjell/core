@@ -11,15 +11,12 @@ try {
   process.exit(1);
 }
 
-// Build cross-platform version that works in both Node.js and browser
-console.log('Building cross-platform version...');
-await build({
-  entryPoints: ['src/index.ts'],
+// Build configuration shared between entry points
+const buildConfig = {
   bundle: true,
   platform: 'neutral', // Neutral platform for cross-platform compatibility
   target: 'es2022',
   format: 'esm',
-  outfile: 'dist/index.js',
   external: [
     'console',
     '@fjell/logging',
@@ -31,9 +28,26 @@ await build({
   },
   metafile: true,
   minify: false, // Keep readable for debugging
+};
+
+// Build main cross-platform version
+console.log('Building cross-platform version...');
+await build({
+  ...buildConfig,
+  entryPoints: ['src/index.ts'],
+  outfile: 'dist/index.js',
+});
+
+// Build validation module
+console.log('Building validation module...');
+await build({
+  ...buildConfig,
+  entryPoints: ['src/validation/index.ts'],
+  outfile: 'dist/validation/index.js',
 });
 
 console.log('Build completed successfully!');
 console.log(`- Cross-platform build: dist/index.js`);
-console.log(`- TypeScript declarations: dist/index.d.ts`);
+console.log(`- Validation module: dist/validation/index.js`);
+console.log(`- TypeScript declarations: dist/index.d.ts & dist/validation/*.d.ts`);
 console.log('This build works in both Node.js and browser environments');
