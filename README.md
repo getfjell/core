@@ -109,6 +109,22 @@ const query = IQFactory.create('user')
 const results = await IQUtils.execute(query)
 ```
 
+### Operations Interface
+
+@fjell/core provides the standard Operations interface used across all fjell libraries. This interface defines the contract for working with Items:
+
+```typescript
+import { Operations, PrimaryOperations, ContainedOperations } from '@fjell/core';
+
+// For primary items
+const userOps: PrimaryOperations<User, 'user'> = ...;
+
+// For contained items
+const commentOps: ContainedOperations<Comment, 'comment', 'post'> = ...;
+```
+
+See [Operations README](src/operations/README.md) for detailed documentation.
+
 ## Architecture Philosophy
 
 Fjell Core is designed around **progressive enhancement**:
