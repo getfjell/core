@@ -109,6 +109,98 @@ const query = IQFactory.create('user')
 const results = await IQUtils.execute(query)
 ```
 
+### Operations Interface
+
+@fjell/core provides the standard Operations interface used across all fjell libraries. This interface defines the contract for working with Items:
+
+```typescript
+import { Operations, PrimaryOperations, ContainedOperations } from '@fjell/core';
+
+// For primary items
+const userOps: PrimaryOperations<User, 'user'> = ...;
+
+// For contained items
+const commentOps: ContainedOperations<Comment, 'comment', 'post'> = ...;
+```
+
+See [Operations README](src/operations/README.md) for detailed documentation.
+
+### Validation Module
+
+@fjell/core provides centralized validation functions for ensuring data integrity across the Fjell ecosystem:
+
+```typescript
+import { 
+  validateLocations, 
+  validateKey, 
+  validatePK, 
+  validateKeys 
+} from '@fjell/core/validation';
+```
+
+#### Location Validation
+
+Validates that location key arrays match the expected coordinate hierarchy:
+
+```typescript
+import { validateLocations } from '@fjell/core/validation';
+
+// Validate location array order
+validateLocations(
+  [{ kt: 'store', lk: 'store-1' }],
+  coordinate,
+  'create'  // operation name for error context
+);
+
+// Non-throwing validation
+import { isValidLocations } from '@fjell/core/validation';
+const result = isValidLocations(
+  [{ kt: 'store', lk: 'store-1' }],
+  coordinate,
+  'create'
+);
+if (!result.valid) {
+  console.log(result.error); // Validation error message
+}
+```
+
+#### Key Validation
+
+Validates PriKey and ComKey structures match library type:
+
+```typescript
+import { validateKey, validatePriKey, validateComKey } from '@fjell/core/validation';
+
+// Validate any key type
+validateKey(key, coordinate, 'get');
+
+// Validate specific key types
+validatePriKey(priKey, coordinate, 'update');
+validateComKey(comKey, coordinate, 'remove');
+```
+
+#### Item Validation
+
+Validates Item keys match expected types:
+
+```typescript
+import { validatePK, validateKeys } from '@fjell/core/validation';
+
+// Validate item has correct primary key type
+const validatedItem = validatePK(item, 'product');
+
+// Validate item key types match key type array
+const validatedItem = validateKeys(item, ['product', 'store']);
+```
+
+**Features:**
+- **Comprehensive Error Messages**: Detailed context including operation name, expected vs actual values
+- **Type Safety**: Full TypeScript support with proper type inference
+- **Performance**: Optimized O(n) validation with minimal overhead
+- **Flexible**: Both throwing and non-throwing variants available
+
+See [Validation Examples](examples/validation-example.ts) for detailed usage patterns.
+
 ## Architecture Philosophy
 
 Fjell Core is designed around **progressive enhancement**:
