@@ -20,6 +20,9 @@ export * from './validation';
 export * from './errors';
 export * from './operations';
 
+// Event system
+export * from './event';
+
 // Operations interfaces
 export type {
   Operations,
