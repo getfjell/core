@@ -2,6 +2,7 @@ export * from "./dictionary";
 export * from "./keys";
 export * from "./items";
 export * from "./Coordinate";
+export * from "./Coordinate";
 export { IFactory } from "./item/IFactory";
 export { AItemService } from "./AItemService";
 
