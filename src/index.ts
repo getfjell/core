@@ -2,6 +2,7 @@ export * from "./dictionary";
 export * from "./keys";
 export * from "./items";
 export * from "./Coordinate";
+export * from "./Coordinate";
 export { IFactory } from "./item/IFactory";
 export { AItemService } from "./AItemService";
 
@@ -19,6 +20,9 @@ export * from './validation';
 // Error types and handling
 export * from './errors';
 export * from './operations';
+
+// Event system
+export * from './event';
 
 // Operations interfaces
 export type {
