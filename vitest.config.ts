@@ -4,20 +4,23 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'node',
-    include: ['tests/**/*.test.ts'],
+    include: ['tests/**/*.{test,spec}.ts'],
     coverage: {
       provider: 'v8',
+      reporter: ['text', 'html', 'clover', 'json'],
+      reportsDirectory: './coverage',
       all: true,
       include: ['src/**/*.{ts,tsx}'],
       exclude: [
-        'src/index.ts',
-        'tests/**',
-        '**/*.d.ts',
         'node_modules/**',
+        'tests/**',
+        'src/index.ts',
+        '**/*.d.ts',
         'dist/**',
+        'build.js',
+        'docs/**',
+        'coverage/**',
       ],
-      reportsDirectory: './coverage',
-      reporter: ['text', 'html', 'clover', 'json'],
       thresholds: {
         global: {
           branches: 91,
