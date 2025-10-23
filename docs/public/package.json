@@ -37,7 +37,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.31.0",
-    "@fjell/eslint-config": "^1.0.5",
+    "@fjell/common-config": "^1.0.5",
     "@swc/core": "^1.13.2",
     "@tsconfig/recommended": "^1.0.10",
     "@types/luxon": "^3.6.2",
