@@ -86,6 +86,12 @@ export function createGetWrapper<
         throw options.onError(error as Error, context);
       }
       
+      // Preserve NotFoundError instances - don't wrap them
+      // This allows upsert and other operations to properly detect "not found" cases
+      if (error && (error as any).constructor.name === 'NotFoundError') {
+        throw error;
+      }
+      
       throw new Error(
         `[${operationName}] Operation failed: ${(error as Error).message}`,
         { cause: error }
