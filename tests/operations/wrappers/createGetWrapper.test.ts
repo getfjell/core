@@ -4,6 +4,7 @@
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createGetWrapper } from '../../../src/operations/wrappers/createGetWrapper';
+import { NotFoundError } from '../../../src/errors/NotFoundError';
 import type { Item } from '../../../src';
 import type { Coordinate } from '../../../src/Coordinate';
 import type { ComKey, PriKey } from '../../../src/keys';
@@ -196,6 +197,28 @@ describe('createGetWrapper', () => {
       });
       
       await expect(get(mockKey)).rejects.toThrow('Custom error');
+    });
+
+    it('should preserve NotFoundError instances without wrapping them', async () => {
+      const notFoundError = new NotFoundError(
+        'Item not found',
+        'test',
+        mockKey
+      );
+      mockImplementation.mockRejectedValue(notFoundError);
+      const get = createGetWrapper(mockCoordinate, mockImplementation);
+      
+      try {
+        await get(mockKey);
+        expect.fail('Should have thrown');
+      } catch (error: any) {
+        // Verify it's still a NotFoundError, not wrapped in a generic Error
+        expect(error).toBe(notFoundError);
+        expect(error instanceof NotFoundError).toBe(true);
+        expect(error.constructor.name).toBe('NotFoundError');
+        // It should NOT have the "[get] Operation failed" wrapper message
+        expect(error.message).not.toContain('[get] Operation failed');
+      }
     });
 
     it('should provide context to custom error handler', async () => {
