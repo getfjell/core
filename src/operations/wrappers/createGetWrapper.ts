@@ -11,6 +11,7 @@ import { validateKey, validatePK } from "../../validation";
 import type { GetMethod } from "../methods";
 import type { ErrorContext, WrapperOptions } from "./types";
 import LibLogger from "../../logger";
+import { NotFoundError } from "../../errors";
 
 const logger = LibLogger.get('operations', 'wrappers', 'get');
 
@@ -88,7 +89,7 @@ export function createGetWrapper<
       
       // Preserve NotFoundError instances - don't wrap them
       // This allows upsert and other operations to properly detect "not found" cases
-      if (error && (error as any).constructor.name === 'NotFoundError') {
+      if (error instanceof NotFoundError) {
         throw error;
       }
       
