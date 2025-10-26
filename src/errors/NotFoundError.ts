@@ -19,6 +19,7 @@ export class NotFoundError extends ActionError {
         timestamp: new Date().toISOString()
       }
     });
+    this.name = 'NotFoundError';
   }
 }
 
