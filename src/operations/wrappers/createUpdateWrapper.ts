@@ -50,11 +50,12 @@ export function createUpdateWrapper<
   
   return async (
     key: PriKey<S> | ComKey<S, L1, L2, L3, L4, L5>,
-    item: Partial<Item<S, L1, L2, L3, L4, L5>>
+    item: Partial<Item<S, L1, L2, L3, L4, L5>>,
+    updateOptions?: import('../Operations').UpdateOptions
   ): Promise<V> => {
     
     if (options.debug) {
-      logger.debug(`[${operationName}] Called with:`, { key, item });
+      logger.debug(`[${operationName}] Called with:`, { key, item, updateOptions });
     }
     
     // Validate
@@ -73,7 +74,7 @@ export function createUpdateWrapper<
     
     // Execute
     try {
-      const result = await implementation(key, item);
+      const result = await implementation(key, item, updateOptions);
       
       if (options.debug) {
         logger.debug(`[${operationName}] Updated item:`, result.key);
@@ -90,7 +91,7 @@ export function createUpdateWrapper<
       if (options.onError) {
         const context: ErrorContext = {
           operationName,
-          params: [key, item],
+          params: [key, item, updateOptions],
           coordinate
         };
         throw options.onError(error as Error, context);

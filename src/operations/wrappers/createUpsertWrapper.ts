@@ -4,13 +4,13 @@
  * Provides automatic validation for upsert() operation parameters.
  */
 
+import type { Coordinate } from "../../Coordinate";
 import type { Item } from "../../items";
 import type { ComKey, LocKeyArray, PriKey } from "../../keys";
-import type { Coordinate } from "../../Coordinate";
-import { validateKey, validateLocations, validatePK } from "../../validation";
+import LibLogger from "../../logger";
+import { validateKey, validatePK } from "../../validation";
 import type { UpsertMethod } from "../methods";
 import type { ErrorContext, WrapperOptions } from "./types";
-import LibLogger from "../../logger";
 
 const logger = LibLogger.get('operations', 'wrappers', 'upsert');
 
@@ -26,8 +26,8 @@ const logger = LibLogger.get('operations', 'wrappers', 'upsert');
  * ```typescript
  * const upsert = createUpsertWrapper(
  *   coordinate,
- *   async (key, item, locations) => {
- *     return await database.upsert(key, item, locations);
+ *   async (key, item, locations, options) => {
+ *     return await database.upsert(key, item, locations, options);
  *   }
  * );
  * ```
@@ -51,17 +51,17 @@ export function createUpsertWrapper<
   return async (
     key: PriKey<S> | ComKey<S, L1, L2, L3, L4, L5>,
     item: Partial<Item<S, L1, L2, L3, L4, L5>>,
-    locations?: LocKeyArray<L1, L2, L3, L4, L5>
+    locations?: LocKeyArray<L1, L2, L3, L4, L5>,
+    updateOptions?: import('../Operations').UpdateOptions
   ): Promise<V> => {
     
     if (options.debug) {
-      logger.debug(`[${operationName}] Called with:`, { key, item, locations });
+      logger.debug(`[${operationName}] Called with:`, { key, item, locations, updateOptions });
     }
     
     // Validate
     if (!options.skipValidation) {
       validateKey(key, coordinate, operationName);
-      validateLocations(locations, coordinate, operationName);
       
       if (!item || typeof item !== 'object' || Array.isArray(item)) {
         throw new Error(
@@ -75,7 +75,7 @@ export function createUpsertWrapper<
     
     // Execute
     try {
-      const result = await implementation(key, item);
+      const result = await implementation(key, item, locations, updateOptions);
       
       if (options.debug) {
         logger.debug(`[${operationName}] Upserted item:`, result.key);
@@ -92,7 +92,7 @@ export function createUpsertWrapper<
       if (options.onError) {
         const context: ErrorContext = {
           operationName,
-          params: [key, item, locations],
+          params: [key, item, locations, updateOptions],
           coordinate
         };
         throw options.onError(error as Error, context);
