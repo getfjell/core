@@ -1,7 +1,7 @@
 import { Item } from "../items";
 import { ComKey, LocKeyArray, PriKey } from "../keys";
 import { ItemQuery } from "../item/ItemQuery";
-import { AffectedKeys, CreateOptions, OperationParams } from "./Operations";
+import { AffectedKeys, CreateOptions, OperationParams, UpdateOptions } from "./Operations";
 
 /**
  * Get method signature - retrieves single item by key
@@ -52,7 +52,8 @@ export interface UpdateMethod<
 > {
   (
     key: PriKey<S> | ComKey<S, L1, L2, L3, L4, L5>,
-    item: Partial<Item<S, L1, L2, L3, L4, L5>>
+    item: Partial<Item<S, L1, L2, L3, L4, L5>>,
+    options?: UpdateOptions
   ): Promise<V>;
 }
 
@@ -87,7 +88,9 @@ export interface UpsertMethod<
 > {
   (
     key: PriKey<S> | ComKey<S, L1, L2, L3, L4, L5>,
-    item: Partial<Item<S, L1, L2, L3, L4, L5>>
+    item: Partial<Item<S, L1, L2, L3, L4, L5>>,
+    locations?: LocKeyArray<L1, L2, L3, L4, L5>,
+    options?: UpdateOptions
   ): Promise<V>;
 }
 

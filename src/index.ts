@@ -29,7 +29,8 @@ export type {
   Operations,
   OperationParams,
   AffectedKeys,
-  CreateOptions
+  CreateOptions,
+  UpdateOptions
 } from './operations/Operations';
 export {
   isPriKey as isOperationPriKey,
