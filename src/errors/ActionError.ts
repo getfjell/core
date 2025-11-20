@@ -35,6 +35,7 @@ export interface ErrorInfo {
     retryable?: boolean;
     conflictingValue?: any;
     expectedValue?: any;
+    fieldErrors?: any[];
   };
   technical?: {
     timestamp: string;
