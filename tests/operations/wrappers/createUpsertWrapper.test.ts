@@ -69,10 +69,12 @@ describe('createUpsertWrapper', () => {
         { name: 'Upserted' }
       );
       
-      // UpsertMethod only takes (key, item), not locations
+      // UpsertMethod takes (key, item, locations, options)
       expect(mockImplementation).toHaveBeenCalledWith(
         mockKey,
-        { name: 'Upserted' }
+        { name: 'Upserted' },
+        undefined,
+        undefined
       );
     });
 
@@ -93,10 +95,12 @@ describe('createUpsertWrapper', () => {
       
       await upsert(mockKey, { name: 'Upserted' });
       
-      // UpsertMethod only takes (key, item), not locations
+      // UpsertMethod takes (key, item, locations, options)
       expect(mockImplementation).toHaveBeenCalledWith(
         mockKey,
-        { name: 'Upserted' }
+        { name: 'Upserted' },
+        undefined,
+        undefined
       );
     });
 
@@ -219,10 +223,12 @@ describe('createUpsertWrapper', () => {
       
       await upsert(mockKey, { name: 'Test' });
       
-      // UpsertMethod only takes (key, item), not locations
+      // UpsertMethod takes (key, item, locations, options)
       expect(mockImplementation).toHaveBeenCalledWith(
         mockKey,
-        { name: 'Test' }
+        { name: 'Test' },
+        undefined,
+        undefined
       );
     });
   });
@@ -248,10 +254,12 @@ describe('createUpsertWrapper', () => {
         { name: 'Upserted' }
       );
       
-      // UpsertMethod only takes (key, item), not locations
+      // UpsertMethod takes (key, item, locations, options)
       expect(mockImplementation).toHaveBeenCalledWith(
         mockKey,
-        { name: 'Upserted' }
+        { name: 'Upserted' },
+        undefined,
+        undefined
       );
       expect(result).toBe(upserted);
     });
@@ -321,7 +329,7 @@ describe('createUpsertWrapper', () => {
       const errorHandler = vi.fn((_err, context) => {
         expect(context.operationName).toBe('upsert');
         expect(context.coordinate).toBe(mockCoordinate);
-        expect(context.params).toHaveLength(3); // key, item, locations (undefined)
+        expect(context.params).toHaveLength(4); // key, item, locations (undefined), options (undefined)
         return new Error('Handled');
       });
       

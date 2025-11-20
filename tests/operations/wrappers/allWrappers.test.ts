@@ -175,7 +175,7 @@ describe('Operation Wrappers - Comprehensive Suite', () => {
       const result = await update(mockKey, { name: 'Updated' });
       
       expect(result).toBe(updated);
-      expect(impl).toHaveBeenCalledWith(mockKey, { name: 'Updated' });
+      expect(impl).toHaveBeenCalledWith(mockKey, { name: 'Updated' }, undefined);
     });
 
     it('should reject invalid key', async () => {
@@ -221,7 +221,9 @@ describe('Operation Wrappers - Comprehensive Suite', () => {
       expect(result).toBe(upserted);
       expect(impl).toHaveBeenCalledWith(
         mockKey,
-        { name: 'Upserted' }
+        { name: 'Upserted' },
+        undefined,
+        undefined
       );
     });
 
@@ -231,7 +233,7 @@ describe('Operation Wrappers - Comprehensive Suite', () => {
       
       await upsert(mockKey, { name: 'Test' });
       
-      expect(impl).toHaveBeenCalledWith(mockKey, { name: 'Test' });
+      expect(impl).toHaveBeenCalledWith(mockKey, { name: 'Test' }, undefined, undefined);
     });
   });
 

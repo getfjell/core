@@ -36,6 +36,72 @@ export type CreateOptions<
 };
 
 /**
+ * Options for update operations across all Fjell libraries.
+ *
+ * These options provide explicit control over update behavior,
+ * with safe defaults that prevent accidental data loss.
+ *
+ * @public
+ */
+export interface UpdateOptions {
+  /**
+   * Controls whether the update replaces the entire document/record or merges with existing data.
+   *
+   * **Default: `false` (merge/partial update)**
+   *
+   * When `false` (default):
+   * - Only the specified fields are updated
+   * - All other existing fields are preserved
+   * - Safe for partial updates
+   * - Recommended for most use cases
+   *
+   * When `true`:
+   * - The entire document/record is replaced with the provided data
+   * - Any fields not included in the update payload are DELETED
+   * - Use with extreme caution
+   * - Logs warning before operation (in implementations)
+   *
+   * ⚠️ **WARNING**: Setting `replace: true` can lead to permanent data loss.
+   * Always verify that your update payload contains ALL fields you want to preserve.
+   *
+   * @default false
+   *
+   * @example Merge update (default - safe)
+   * ```typescript
+   * // Existing: { id: '123', name: 'John', email: 'john@example.com', status: 'active' }
+   * await operations.update(
+   *   { kt: 'user', pk: '123' },
+   *   { status: 'inactive' }
+   * );
+   * // Result: { id: '123', name: 'John', email: 'john@example.com', status: 'inactive' }
+   * // ✅ All fields preserved except status
+   * ```
+   *
+   * @example Full replacement (use with caution)
+   * ```typescript
+   * // Existing: { id: '123', name: 'John', email: 'john@example.com', status: 'active' }
+   * await operations.update(
+   *   { kt: 'user', pk: '123' },
+   *   { status: 'inactive' },
+   *   { replace: true }
+   * );
+   * // Result: { status: 'inactive' }
+   * // ❌ name and email are DELETED!
+   * ```
+   */
+  replace?: boolean;
+
+  /**
+   * Future options can be added here without breaking changes:
+   * - validate?: boolean - Enable/disable validation
+   * - dryRun?: boolean - Simulate update without committing
+   * - skipCache?: boolean - Bypass cache layers
+   * - returnPrevious?: boolean - Return previous value
+   * - timeout?: number - Operation timeout
+   */
+}
+
+/**
  * Core Operations interface for Item-based data access.
  * This interface defines the standard contract for all fjell libraries
  * that operate on Items.
@@ -158,11 +224,25 @@ export interface Operations<
    *
    * @param key - Primary or composite key
    * @param item - Partial item properties to update
+   * @param options - Optional update options (controls merge vs replace behavior)
    * @returns The updated item
+   *
+   * @example Merge update (default - safe)
+   * ```typescript
+   * await operations.update(key, { status: 'active' });
+   * // Merges with existing data, preserves other fields
+   * ```
+   *
+   * @example Replace update (dangerous)
+   * ```typescript
+   * await operations.update(key, { status: 'active' }, { replace: true });
+   * // Replaces entire document, deletes unspecified fields
+   * ```
    */
   update(
     key: PriKey<S> | ComKey<S, L1, L2, L3, L4, L5>,
-    item: Partial<Item<S, L1, L2, L3, L4, L5>>
+    item: Partial<Item<S, L1, L2, L3, L4, L5>>,
+    options?: UpdateOptions
   ): Promise<V>;
 
   /**
@@ -171,12 +251,14 @@ export interface Operations<
    * @param key - Primary or composite key
    * @param item - Partial item properties
    * @param locations - Optional locations for creation
+   * @param options - Optional update options (used only if item exists, ignored for creation)
    * @returns The upserted item
    */
   upsert(
     key: PriKey<S> | ComKey<S, L1, L2, L3, L4, L5>,
     item: Partial<Item<S, L1, L2, L3, L4, L5>>,
-    locations?: LocKeyArray<L1, L2, L3, L4, L5>
+    locations?: LocKeyArray<L1, L2, L3, L4, L5>,
+    options?: UpdateOptions
   ): Promise<V>;
 
   /**

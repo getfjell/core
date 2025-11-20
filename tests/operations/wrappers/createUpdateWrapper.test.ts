@@ -64,7 +64,7 @@ describe('createUpdateWrapper', () => {
       
       await update(mockKey, { name: 'Updated' });
       
-      expect(mockImplementation).toHaveBeenCalledWith(mockKey, { name: 'Updated' });
+      expect(mockImplementation).toHaveBeenCalledWith(mockKey, { name: 'Updated' }, undefined);
     });
 
     it('should reject null key', async () => {
@@ -178,7 +178,7 @@ describe('createUpdateWrapper', () => {
       
       const result = await update(mockKey, { name: 'Updated' });
       
-      expect(mockImplementation).toHaveBeenCalledWith(mockKey, { name: 'Updated' });
+      expect(mockImplementation).toHaveBeenCalledWith(mockKey, { name: 'Updated' }, undefined);
       expect(result).toBe(updated);
     });
 
@@ -246,7 +246,7 @@ describe('createUpdateWrapper', () => {
       const errorHandler = vi.fn((_err, context) => {
         expect(context.operationName).toBe('update');
         expect(context.coordinate).toBe(mockCoordinate);
-        expect(context.params).toHaveLength(2);
+        expect(context.params).toHaveLength(3);
         return new Error('Handled');
       });
       
