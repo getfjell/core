@@ -10,6 +10,7 @@ import type { LocKeyArray } from "../../keys";
 import type { Coordinate } from "../../Coordinate";
 import { validateLocations, validatePK, validateQuery } from "../../validation";
 import type { AllMethod } from "../methods";
+import type { AllOperationResult, AllOptions } from "../Operations";
 import type { ErrorContext, WrapperOptions } from "./types";
 import LibLogger from "../../logger";
 
@@ -27,8 +28,8 @@ const logger = LibLogger.get('operations', 'wrappers', 'all');
  * ```typescript
  * const all = createAllWrapper(
  *   coordinate,
- *   async (query, locations) => {
- *     return await database.findAll(query, locations);
+ *   async (query, locations, options) => {
+ *     return await database.findAll(query, locations, options);
  *   }
  * );
  * ```
@@ -44,24 +45,37 @@ export function createAllWrapper<
 >(
   coordinate: Coordinate<S, L1, L2, L3, L4, L5>,
   implementation: AllMethod<V, S, L1, L2, L3, L4, L5>,
-  options: WrapperOptions = {}
+  wrapperOptions: WrapperOptions = {}
 ): AllMethod<V, S, L1, L2, L3, L4, L5> {
   
-  const operationName = options.operationName || 'all';
+  const operationName = wrapperOptions.operationName || 'all';
   
   return async (
     query?: ItemQuery,
-    locations?: LocKeyArray<L1, L2, L3, L4, L5> | []
-  ): Promise<V[]> => {
+    locations?: LocKeyArray<L1, L2, L3, L4, L5> | [],
+    allOptions?: AllOptions
+  ): Promise<AllOperationResult<V>> => {
     
-    if (options.debug) {
-      logger.debug(`[${operationName}] Called with:`, { query, locations });
+    if (wrapperOptions.debug) {
+      logger.debug(`[${operationName}] Called with:`, { query, locations, allOptions });
     }
     
-    // Validate
-    if (!options.skipValidation) {
+    // Validate query and locations
+    if (!wrapperOptions.skipValidation) {
       validateQuery(query, operationName);
       validateLocations(locations, coordinate, operationName);
+      
+      // Validate pagination options
+      if (allOptions && 'limit' in allOptions && allOptions.limit != null) {
+        if (!Number.isInteger(allOptions.limit) || allOptions.limit < 1) {
+          throw new Error(`[${operationName}] limit must be a positive integer, got: ${allOptions.limit}`);
+        }
+      }
+      if (allOptions && 'offset' in allOptions && allOptions.offset != null) {
+        if (!Number.isInteger(allOptions.offset) || allOptions.offset < 0) {
+          throw new Error(`[${operationName}] offset must be a non-negative integer, got: ${allOptions.offset}`);
+        }
+      }
     }
     
     // Normalize
@@ -70,27 +84,31 @@ export function createAllWrapper<
     
     // Execute
     try {
-      const result = await implementation(normalizedQuery, normalizedLocations);
+      const result = await implementation(normalizedQuery, normalizedLocations, allOptions);
       
-      if (options.debug) {
-        logger.debug(`[${operationName}] Result: ${result.length} items`);
+      if (wrapperOptions.debug) {
+        logger.debug(`[${operationName}] Result: ${result.items.length} items, total: ${result.metadata.total}`);
       }
       
       // Validate primary key types for all items
-      if (!options.skipValidation) {
-        return validatePK(result, coordinate.kta[0]) as V[];
+      if (!wrapperOptions.skipValidation) {
+        const validatedItems = validatePK(result.items, coordinate.kta[0]) as V[];
+        return {
+          items: validatedItems,
+          metadata: result.metadata
+        };
       }
       
       return result;
       
     } catch (error) {
-      if (options.onError) {
+      if (wrapperOptions.onError) {
         const context: ErrorContext = {
           operationName,
-          params: [query, locations],
+          params: [query, locations, allOptions],
           coordinate
         };
-        throw options.onError(error as Error, context);
+        throw wrapperOptions.onError(error as Error, context);
       }
       
       throw new Error(

@@ -36,6 +36,133 @@ export type CreateOptions<
 };
 
 /**
+ * Options for the all() operation to control pagination.
+ *
+ * When provided, these options take precedence over any limit/offset
+ * specified in the ItemQuery.
+ *
+ * @public
+ *
+ * @example
+ * ```typescript
+ * // Fetch first 50 items
+ * const result = await operations.all(query, [], { limit: 50, offset: 0 });
+ *
+ * // Fetch next page
+ * const nextPage = await operations.all(query, [], { limit: 50, offset: 50 });
+ * ```
+ */
+export interface AllOptions {
+  /**
+   * Maximum number of items to return.
+   *
+   * - Must be a positive integer (>= 1)
+   * - When not provided, returns all matching items
+   * - Takes precedence over query.limit when both are specified
+   */
+  limit?: number;
+
+  /**
+   * Number of items to skip before returning results.
+   *
+   * - Must be a non-negative integer (>= 0)
+   * - Defaults to 0 when not provided
+   * - Takes precedence over query.offset when both are specified
+   */
+  offset?: number;
+}
+
+/**
+ * Metadata about the pagination state for an all() operation.
+ *
+ * This metadata enables proper pagination UI and logic by providing
+ * the total count of matching items before limit/offset are applied.
+ *
+ * @public
+ */
+export interface PaginationMetadata {
+  /**
+   * Total count of items matching the query BEFORE limit/offset applied.
+   *
+   * This represents the complete result set size and is used to:
+   * - Display "Showing X of Y results"
+   * - Calculate total pages
+   * - Determine if more items exist
+   */
+  total: number;
+
+  /**
+   * Number of items actually returned in this response.
+   *
+   * This equals `items.length` and is provided for convenience.
+   * When offset + returned < total, more items exist.
+   */
+  returned: number;
+
+  /**
+   * The limit that was applied, if any.
+   *
+   * - Undefined when no limit was applied
+   * - Reflects the effective limit (options.limit ?? query.limit)
+   */
+  limit?: number;
+
+  /**
+   * The offset that was applied.
+   *
+   * - 0 when no offset was applied
+   * - Reflects the effective offset (options.offset ?? query.offset ?? 0)
+   */
+  offset: number;
+
+  /**
+   * Convenience field indicating whether more items exist beyond this page.
+   *
+   * Calculated as: `offset + returned < total`
+   *
+   * Useful for:
+   * - "Load More" buttons
+   * - Infinite scroll implementations
+   * - "Next Page" button state
+   */
+  hasMore: boolean;
+}
+
+/**
+ * Result structure for the all() operation with pagination support.
+ *
+ * This structure provides both the items and metadata needed for
+ * implementing proper pagination in applications.
+ *
+ * @template T - The item type being returned
+ *
+ * @public
+ *
+ * @example
+ * ```typescript
+ * const result = await operations.all(query, [], { limit: 50, offset: 0 });
+ *
+ * console.log(`Showing ${result.metadata.returned} of ${result.metadata.total}`);
+ * // "Showing 50 of 1234"
+ *
+ * if (result.metadata.hasMore) {
+ *   // Load next page
+ * }
+ * ```
+ */
+export interface AllOperationResult<T> {
+  /**
+   * Array of items matching the query, with limit/offset applied.
+   */
+  items: T[];
+
+  /**
+   * Pagination metadata for the result set.
+   */
+  metadata: PaginationMetadata;
+}
+
+/**
  * Options for update operations across all Fjell libraries.
  *
  * These options provide explicit control over update behavior,
@@ -131,28 +258,42 @@ export interface Operations<
   L5 extends string = never,
 > {
   /**
-   * Retrieves all items matching the query.
+   * Retrieves all items matching the query with optional pagination.
    *
-   * @param query - Optional query to filter items
+   * @param query - Optional query to filter items (may include limit/offset for backwards compatibility)
    * @param locations - Optional location hierarchy to scope the query
-   * @returns Array of items matching the query
+   * @param options - Optional pagination options (takes precedence over query limit/offset)
+   * @returns Result containing items and pagination metadata
    *
-   * @example
+   * @example Get all items
    * ```typescript
-   * // Get all users
-   * const users = await operations.all();
+   * const result = await operations.all();
+   * // result.items = all items
+   * // result.metadata.total = items.length
+   * ```
    *
-   * // Get users with filter
-   * const activeUsers = await operations.all({ filter: { status: 'active' } });
+   * @example Get paginated items
+   * ```typescript
+   * const result = await operations.all({}, [], { limit: 50, offset: 0 });
+   * // result.items = first 50 items
+   * // result.metadata.total = total matching count
+   * // result.metadata.hasMore = true if more exist
+   * ```
    *
-   * // Get items in specific location
-   * const comments = await operations.all({}, [{kt: 'post', lk: 'post-123'}]);
+   * @example Get items in specific location with pagination
+   * ```typescript
+   * const result = await operations.all(
+   *   {},
+   *   [{kt: 'post', lk: 'post-123'}],
+   *   { limit: 20, offset: 0 }
+   * );
    * ```
    */
   all(
     query?: ItemQuery,
-    locations?: LocKeyArray<L1, L2, L3, L4, L5> | []
-  ): Promise<V[]>;
+    locations?: LocKeyArray<L1, L2, L3, L4, L5> | [],
+    options?: AllOptions
+  ): Promise<AllOperationResult<V>>;
 
   /**
    * Retrieves the first item matching the query.

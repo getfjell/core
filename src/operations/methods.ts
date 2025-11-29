@@ -1,7 +1,7 @@
 import { Item } from "../items";
 import { ComKey, LocKeyArray, PriKey } from "../keys";
 import { ItemQuery } from "../item/ItemQuery";
-import { AffectedKeys, CreateOptions, OperationParams, UpdateOptions } from "./Operations";
+import { AffectedKeys, AllOperationResult, AllOptions, CreateOptions, OperationParams, UpdateOptions } from "./Operations";
 
 /**
  * Get method signature - retrieves single item by key
@@ -95,7 +95,31 @@ export interface UpsertMethod<
 }
 
 /**
- * All method signature - retrieves all items matching query
+ * All method signature - retrieves all items matching query with optional pagination.
+ *
+ * @param query - Optional query to filter items (may include limit/offset for backwards compatibility)
+ * @param locations - Optional location hierarchy to scope the query
+ * @param options - Optional pagination options (takes precedence over query limit/offset)
+ * @returns Result containing items and pagination metadata
+ *
+ * @example Without options (backwards compatible)
+ * ```typescript
+ * const result = await operations.all({ compoundCondition: {...} });
+ * // result.items = [...all matching items...]
+ * // result.metadata.total = result.items.length
+ * ```
+ *
+ * @example With options (new pattern)
+ * ```typescript
+ * const result = await operations.all(
+ *   { compoundCondition: {...} },
+ *   [],
+ *   { limit: 50, offset: 0 }
+ * );
+ * // result.items = [...first 50 items...]
+ * // result.metadata.total = total matching count
+ * // result.metadata.hasMore = true if more items exist
+ * ```
  */
 export interface AllMethod<
   V extends Item<S, L1, L2, L3, L4, L5>,
@@ -108,8 +132,9 @@ export interface AllMethod<
 > {
   (
     query?: ItemQuery,
-    locations?: LocKeyArray<L1, L2, L3, L4, L5> | []
-  ): Promise<V[]>;
+    locations?: LocKeyArray<L1, L2, L3, L4, L5> | [],
+    options?: AllOptions
+  ): Promise<AllOperationResult<V>>;
 }
 
 /**
