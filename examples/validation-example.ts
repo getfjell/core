@@ -19,6 +19,7 @@ import {
   validatePK,
   validatePriKey,
 } from '../src/index';
+import { SchemaValidator, validateSchema, ValidationError } from '../src/validation';
 
 /**
  * ========================================
@@ -399,6 +400,129 @@ function example12_SpecificValidators() {
 }
 
 /**
+ * ========================================
+ * Schema Validation Examples (Zod, etc.)
+ * ========================================
+ */
+
+// Example 13: Schema validation with Zod (if zod is installed)
+async function example13_ZodSchemaValidation() {
+  // Note: This example assumes zod is installed
+  // In real usage, you would: import { z } from 'zod';
+  
+  // Mock Zod schema for demonstration
+  const mockZodSchema: SchemaValidator<{ name: string; age: number; email?: string }> = {
+    parse: (data: unknown) => {
+      if (typeof data === 'object' && data !== null && 'name' in data && 'age' in data) {
+        const obj = data as any;
+        if (typeof obj.name === 'string' && obj.name.length >= 3 &&
+            typeof obj.age === 'number' && obj.age >= 18) {
+          return { name: obj.name, age: obj.age, email: obj.email };
+        }
+      }
+      throw { issues: [{ path: [], message: 'Invalid data', code: 'custom' }] };
+    },
+    safeParse: (data: unknown) => {
+      try {
+        return { success: true as const, data: mockZodSchema.parse(data) };
+      } catch (error) {
+        return { success: false as const, error };
+      }
+    }
+  };
+
+  // Valid data
+  try {
+    const validated = await validateSchema(
+      { name: 'Alice', age: 25, email: 'alice@example.com' },
+      mockZodSchema
+    );
+    console.log('✓ Valid data:', validated);
+  } catch (error) {
+    console.error('✗ Validation failed:', error);
+  }
+
+  // Invalid data
+  try {
+    await validateSchema({ name: 'Al', age: 10 }, mockZodSchema);
+    console.log('✓ Valid data');
+  } catch (error) {
+    if (error instanceof ValidationError) {
+      console.error('✗ Expected ValidationError:', error.message);
+      console.error('  Field errors:', error.fieldErrors);
+    }
+  }
+}
+
+// Example 14: Schema validation without schema (passthrough)
+async function example14_NoSchema() {
+  const data = { name: 'Bob', age: 30 };
+  
+  // When no schema is provided, data is returned as-is
+  const result = await validateSchema(data);
+  console.log('✓ Data returned as-is:', result);
+  // Result equals original data when no schema provided
+}
+
+// Example 15: Schema validation in cache layer
+async function example15_CacheValidation() {
+  const userSchema: SchemaValidator<{ id: string; name: string }> = {
+    parse: (data: unknown) => {
+      if (typeof data === 'object' && data !== null && 'id' in data && 'name' in data) {
+        return data as { id: string; name: string };
+      }
+      throw new Error('Invalid user data');
+    },
+    safeParse: (data: unknown) => {
+      try {
+        return { success: true as const, data: userSchema.parse(data) };
+      } catch (error) {
+        return { success: false as const, error };
+      }
+    }
+  };
+
+  // Validate before caching
+  const userData = { id: 'user-123', name: 'Charlie' };
+  try {
+    const validatedUser = await validateSchema(userData, userSchema);
+    // await cache.set(`user:${validatedUser.id}`, validatedUser);
+    console.log('✓ User validated and ready for cache:', validatedUser);
+  } catch (error) {
+    console.error('✗ Cannot cache invalid user:', error);
+  }
+}
+
+// Example 16: Schema validation in API layer
+async function example16_APIValidation() {
+  const responseSchema: SchemaValidator<{ status: string; data: any }> = {
+    parse: (data: unknown) => {
+      if (typeof data === 'object' && data !== null && 'status' in data) {
+        return data as { status: string; data: any };
+      }
+      throw new Error('Invalid API response');
+    },
+    safeParse: (data: unknown) => {
+      try {
+        return { success: true as const, data: responseSchema.parse(data) };
+      } catch (error) {
+        return { success: false as const, error };
+      }
+    }
+  };
+
+  // Validate API response before sending to client
+  const apiResponse = { status: 'success', data: { message: 'Hello' } };
+  try {
+    const validatedResponse = await validateSchema(apiResponse, responseSchema);
+    // return res.json(validatedResponse);
+    console.log('✓ API response validated:', validatedResponse);
+  } catch (error) {
+    console.error('✗ Cannot send invalid response:', error);
+  }
+}
+
+/**
  * Run all examples
  */
 export function runAllValidationExamples() {
@@ -421,6 +545,12 @@ export function runAllValidationExamples() {
   example10_OperationValidation();
   example11_ErrorHandling();
   example12_SpecificValidators();
+
+  console.log('\n=== Schema Validation Examples ===');
+  example13_ZodSchemaValidation();
+  example14_NoSchema();
+  example15_CacheValidation();
+  example16_APIValidation();
 }
 
 // Uncomment to run examples
