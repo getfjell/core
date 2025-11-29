@@ -4,7 +4,7 @@
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createAllWrapper } from '../../../src/operations/wrappers/createAllWrapper';
-import type { Item } from '../../../src';
+import type { AllOperationResult, Item } from '../../../src';
 import type { Coordinate } from '../../../src/Coordinate';
 // import type { ComKey, PriKey } from '../../../src/keys';
 
@@ -29,28 +29,29 @@ describe('createAllWrapper', () => {
 
   describe('validation', () => {
     it('should accept valid query and locations', async () => {
-      mockImplementation.mockResolvedValue([]);
+      mockImplementation.mockResolvedValue({ items: [], metadata: { total: 0, returned: 0, offset: 0, hasMore: false } });
       const all = createAllWrapper(mockCoordinate, mockImplementation);
       
       await all({ filter: { status: 'active' } }, [{ kt: 'org', lk: '123' }]);
       
       expect(mockImplementation).toHaveBeenCalledWith(
         { filter: { status: 'active' } },
-        [{ kt: 'org', lk: '123' }]
+        [{ kt: 'org', lk: '123' }],
+        undefined
       );
     });
 
     it('should accept empty query and locations', async () => {
-      mockImplementation.mockResolvedValue([]);
+      mockImplementation.mockResolvedValue({ items: [], metadata: { total: 0, returned: 0, offset: 0, hasMore: false } });
       const all = createAllWrapper(mockCoordinate, mockImplementation);
       
       await all({}, []);
       
-      expect(mockImplementation).toHaveBeenCalledWith({}, []);
+      expect(mockImplementation).toHaveBeenCalledWith({}, [], undefined);
     });
 
     it('should reject invalid query type', async () => {
-      mockImplementation.mockResolvedValue([]);
+      mockImplementation.mockResolvedValue({ items: [], metadata: { total: 0, returned: 0, offset: 0, hasMore: false } });
       const all = createAllWrapper(mockCoordinate, mockImplementation);
       
       await expect(
@@ -59,7 +60,7 @@ describe('createAllWrapper', () => {
     });
 
     it('should reject array as query', async () => {
-      mockImplementation.mockResolvedValue([]);
+      mockImplementation.mockResolvedValue({ items: [], metadata: { total: 0, returned: 0, offset: 0, hasMore: false } });
       const all = createAllWrapper(mockCoordinate, mockImplementation);
       
       await expect(
@@ -68,7 +69,7 @@ describe('createAllWrapper', () => {
     });
 
     it('should reject invalid locations with wrong key type', async () => {
-      mockImplementation.mockResolvedValue([]);
+      mockImplementation.mockResolvedValue({ items: [], metadata: { total: 0, returned: 0, offset: 0, hasMore: false } });
       const all = createAllWrapper(mockCoordinate, mockImplementation);
       
       await expect(
@@ -77,7 +78,7 @@ describe('createAllWrapper', () => {
     });
 
     it('should reject locations with too many elements', async () => {
-      mockImplementation.mockResolvedValue([]);
+      mockImplementation.mockResolvedValue({ items: [], metadata: { total: 0, returned: 0, offset: 0, hasMore: false } });
       const all = createAllWrapper(mockCoordinate, mockImplementation);
       
       await expect(
@@ -86,7 +87,7 @@ describe('createAllWrapper', () => {
     });
 
     it('should skip validation when skipValidation is true', async () => {
-      mockImplementation.mockResolvedValue([]);
+      mockImplementation.mockResolvedValue({ items: [], metadata: { total: 0, returned: 0, offset: 0, hasMore: false } });
       const all = createAllWrapper(mockCoordinate, mockImplementation, {
         skipValidation: true
       });
@@ -99,30 +100,30 @@ describe('createAllWrapper', () => {
 
   describe('parameter normalization', () => {
     it('should normalize undefined query to empty object', async () => {
-      mockImplementation.mockResolvedValue([]);
+      mockImplementation.mockResolvedValue({ items: [], metadata: { total: 0, returned: 0, offset: 0, hasMore: false } });
       const all = createAllWrapper(mockCoordinate, mockImplementation);
       
       await all(undefined, []);
       
-      expect(mockImplementation).toHaveBeenCalledWith({}, []);
+      expect(mockImplementation).toHaveBeenCalledWith({}, [], undefined);
     });
 
     it('should normalize undefined locations to empty array', async () => {
-      mockImplementation.mockResolvedValue([]);
+      mockImplementation.mockResolvedValue({ items: [], metadata: { total: 0, returned: 0, offset: 0, hasMore: false } });
       const all = createAllWrapper(mockCoordinate, mockImplementation);
       
       await all({}, undefined);
       
-      expect(mockImplementation).toHaveBeenCalledWith({}, []);
+      expect(mockImplementation).toHaveBeenCalledWith({}, [], undefined);
     });
 
     it('should normalize both undefined params', async () => {
-      mockImplementation.mockResolvedValue([]);
+      mockImplementation.mockResolvedValue({ items: [], metadata: { total: 0, returned: 0, offset: 0, hasMore: false } });
       const all = createAllWrapper(mockCoordinate, mockImplementation);
       
       await all(undefined, undefined);
       
-      expect(mockImplementation).toHaveBeenCalledWith({}, []);
+      expect(mockImplementation).toHaveBeenCalledWith({}, [], undefined);
     });
   });
 
@@ -149,7 +150,12 @@ describe('createAllWrapper', () => {
         }
       ];
       
-      mockImplementation.mockResolvedValue(testItems);
+      const mockResult: AllOperationResult<TestItem> = {
+        items: testItems,
+        metadata: { total: 2, returned: 2, offset: 0, hasMore: false }
+      };
+      
+      mockImplementation.mockResolvedValue(mockResult);
       const all = createAllWrapper(mockCoordinate, mockImplementation);
       
       const result = await all(
@@ -159,30 +165,42 @@ describe('createAllWrapper', () => {
       
       expect(mockImplementation).toHaveBeenCalledWith(
         { filter: { status: 'active' } },
-        [{ kt: 'org', lk: 'org1' }]
+        [{ kt: 'org', lk: 'org1' }],
+        undefined
       );
-      expect(result).toStrictEqual(testItems);
+      expect(result.items).toStrictEqual(testItems);
+      expect(result.metadata.total).toBe(2);
     });
 
-    it('should return empty array when implementation returns empty array', async () => {
-      mockImplementation.mockResolvedValue([]);
+    it('should return empty result when implementation returns empty result', async () => {
+      const emptyResult: AllOperationResult<TestItem> = {
+        items: [],
+        metadata: { total: 0, returned: 0, offset: 0, hasMore: false }
+      };
+      mockImplementation.mockResolvedValue(emptyResult);
       const all = createAllWrapper(mockCoordinate, mockImplementation);
       
       const result = await all({}, []);
       
-      expect(result).toEqual([]);
+      expect(result.items).toEqual([]);
+      expect(result.metadata.total).toBe(0);
     });
 
     it('should handle async implementation', async () => {
+      const emptyResult: AllOperationResult<TestItem> = {
+        items: [],
+        metadata: { total: 0, returned: 0, offset: 0, hasMore: false }
+      };
       mockImplementation.mockImplementation(async () => {
         await new Promise(resolve => setTimeout(resolve, 10));
-        return [];
+        return emptyResult;
       });
       
       const all = createAllWrapper(mockCoordinate, mockImplementation);
       const result = await all({}, []);
       
-      expect(result).toEqual([]);
+      expect(result.items).toEqual([]);
+      expect(result.metadata.total).toBe(0);
     });
   });
 
@@ -227,7 +245,7 @@ describe('createAllWrapper', () => {
       const errorHandler = vi.fn((_err, context) => {
         expect(context.operationName).toBe('all');
         expect(context.coordinate).toBe(mockCoordinate);
-        expect(context.params).toHaveLength(2);
+        expect(context.params).toHaveLength(3); // query, locations, allOptions
         return new Error('Handled');
       });
       
@@ -252,7 +270,11 @@ describe('createAllWrapper', () => {
 
     it('should log debug info when debug is true', async () => {
       const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
-      mockImplementation.mockResolvedValue([]);
+      const emptyResult: AllOperationResult<TestItem> = {
+        items: [],
+        metadata: { total: 0, returned: 0, offset: 0, hasMore: false }
+      };
+      mockImplementation.mockResolvedValue(emptyResult);
       
       const all = createAllWrapper(mockCoordinate, mockImplementation, {
         debug: true
@@ -268,7 +290,11 @@ describe('createAllWrapper', () => {
     });
 
     it('should handle all options together', async () => {
-      mockImplementation.mockResolvedValue([]);
+      const emptyResult: AllOperationResult<TestItem> = {
+        items: [],
+        metadata: { total: 0, returned: 0, offset: 0, hasMore: false }
+      };
+      mockImplementation.mockResolvedValue(emptyResult);
       
       const all = createAllWrapper(mockCoordinate, mockImplementation, {
         skipValidation: true,
@@ -285,8 +311,11 @@ describe('createAllWrapper', () => {
   describe('type safety', () => {
     it('should maintain proper typing for implementation', async () => {
       // This test verifies TypeScript compilation
-      const typedImplementation = async (): Promise<TestItem[]> => {
-        return [];
+      const typedImplementation = async (): Promise<AllOperationResult<TestItem>> => {
+        return {
+          items: [],
+          metadata: { total: 0, returned: 0, offset: 0, hasMore: false }
+        };
       };
       
       const all = createAllWrapper<TestItem, 'test', 'org'>(
@@ -295,7 +324,8 @@ describe('createAllWrapper', () => {
       );
       
       const result = await all({}, []);
-      expect(result).toEqual([]);
+      expect(result.items).toEqual([]);
+      expect(result.metadata.total).toBe(0);
     });
   });
 });

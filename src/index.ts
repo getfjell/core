@@ -30,7 +30,10 @@ export type {
   OperationParams,
   AffectedKeys,
   CreateOptions,
-  UpdateOptions
+  UpdateOptions,
+  AllOptions,
+  PaginationMetadata,
+  AllOperationResult
 } from './operations/Operations';
 export {
   isPriKey as isOperationPriKey,

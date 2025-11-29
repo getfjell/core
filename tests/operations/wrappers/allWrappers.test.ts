@@ -18,7 +18,7 @@ import {
   createUpdateWrapper,
   createUpsertWrapper
 } from '../../../src/operations/wrappers';
-import type { Item } from '../../../src';
+import type { AllOperationResult, Item } from '../../../src';
 import { type Coordinate, createCoordinate } from '../../../src/Coordinate';
 import type { ComKey, PriKey } from '../../../src/keys';
 
@@ -56,26 +56,39 @@ describe('Operation Wrappers - Comprehensive Suite', () => {
 
   describe('createAllWrapper', () => {
     it('should validate and execute all()', async () => {
-      const impl = vi.fn().mockResolvedValue([]);
+      const emptyResult: AllOperationResult<TestItem> = {
+        items: [],
+        metadata: { total: 0, returned: 0, offset: 0, hasMore: false }
+      };
+      const impl = vi.fn().mockResolvedValue(emptyResult);
       const all = createAllWrapper(mockCoordinate, impl);
       
       const result = await all({}, []);
       
-      expect(result).toEqual([]);
-      expect(impl).toHaveBeenCalledWith({}, []);
+      expect(result.items).toEqual([]);
+      expect(result.metadata.total).toBe(0);
+      expect(impl).toHaveBeenCalledWith({}, [], undefined);
     });
 
     it('should normalize undefined params', async () => {
-      const impl = vi.fn().mockResolvedValue([]);
+      const emptyResult: AllOperationResult<TestItem> = {
+        items: [],
+        metadata: { total: 0, returned: 0, offset: 0, hasMore: false }
+      };
+      const impl = vi.fn().mockResolvedValue(emptyResult);
       const all = createAllWrapper(mockCoordinate, impl);
       
       await all(undefined, undefined);
       
-      expect(impl).toHaveBeenCalledWith({}, []);
+      expect(impl).toHaveBeenCalledWith({}, [], undefined);
     });
 
     it('should reject invalid query', async () => {
-      const impl = vi.fn().mockResolvedValue([]);
+      const emptyResult: AllOperationResult<TestItem> = {
+        items: [],
+        metadata: { total: 0, returned: 0, offset: 0, hasMore: false }
+      };
+      const impl = vi.fn().mockResolvedValue(emptyResult);
       const all = createAllWrapper(mockCoordinate, impl);
       
       await expect(all('invalid' as any, [])).rejects.toThrow('[all]');
