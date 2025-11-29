@@ -36,23 +36,13 @@ export type CreateOptions<
 };
 
 /**
- * Options for the all() operation to control pagination.
+ * Base options for pagination operations (all() and find()).
  *
- * When provided, these options take precedence over any limit/offset
- * specified in the ItemQuery.
+ * Contains the common pagination parameters shared by both operations.
  *
  * @public
- *
- * @example
- * ```typescript
- * // Fetch first 50 items
- * const result = await operations.all(query, [], { limit: 50, offset: 0 });
- *
- * // Fetch next page
- * const nextPage = await operations.all(query, [], { limit: 50, offset: 50 });
- * ```
  */
-export interface AllOptions {
+export interface PaginationOptions {
   /**
    * Maximum number of items to return.
    *
@@ -70,6 +60,47 @@ export interface AllOptions {
    * - Takes precedence over query.offset when both are specified
    */
   offset?: number;
+}
+
+/**
+ * Options for the all() operation with pagination support.
+ *
+ * When provided, these options take precedence over any limit/offset
+ * specified in the ItemQuery.
+ *
+ * @public
+ *
+ * @example
+ * ```typescript
+ * // Fetch first 50 items
+ * const result = await operations.all(query, [], { limit: 50, offset: 0 });
+ *
+ * // Fetch next page
+ * const nextPage = await operations.all(query, [], { limit: 50, offset: 50 });
+ * ```
+ */
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export interface AllOptions extends PaginationOptions {
+  // Future all-specific options can be added here without breaking changes
+}
+
+/**
+ * Options for the find() operation with pagination support.
+ *
+ * When provided, these options take precedence over any limit/offset
+ * passed to finder functions.
+ *
+ * @public
+ *
+ * @example
+ * ```typescript
+ * // Find with pagination
+ * const findResult = await operations.find('byEmail', { email: 'test@example.com' }, [], { limit: 10 });
+ * ```
+ */
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export interface FindOptions extends PaginationOptions {
+  // Future find-specific options can be added here without breaking changes
 }
 
 /**
@@ -129,6 +160,28 @@ export interface PaginationMetadata {
 }
 
 /**
+ * Base result structure for paginated operations.
+ *
+ * This structure provides both the items and metadata needed for
+ * implementing proper pagination in applications.
+ *
+ * @template T - The item type being returned
+ *
+ * @public
+ */
+export interface OperationResult<T> {
+  /**
+   * Array of items matching the query, with limit/offset applied.
+   */
+  items: T[];
+
+  /**
+   * Pagination metadata for the result set.
+   */
+  metadata: PaginationMetadata;
+}
+
+/**
  * Result structure for the all() operation with pagination support.
  *
  * This structure provides both the items and metadata needed for
@@ -150,16 +203,36 @@ export interface PaginationMetadata {
  * }
  * ```
  */
-export interface AllOperationResult<T> {
-  /**
-   * Array of items matching the query, with limit/offset applied.
-   */
-  items: T[];
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export interface AllOperationResult<T> extends OperationResult<T> {
+  // Future all-specific result properties can be added here without breaking changes
+}
 
-  /**
-   * Pagination metadata for the result set.
-   */
-  metadata: PaginationMetadata;
+/**
+ * Result structure for the find() operation with pagination support.
+ *
+ * This structure provides both the items and metadata needed for
+ * implementing proper pagination in find operations.
+ *
+ * @template T - The item type being returned
+ *
+ * @public
+ *
+ * @example
+ * ```typescript
+ * const result = await operations.find('byEmail', { email: 'test@example.com' }, [], { limit: 10 });
+ *
+ * console.log(`Found ${result.metadata.returned} of ${result.metadata.total} results`);
+ * // "Found 10 of 25 results"
+ *
+ * if (result.metadata.hasMore) {
+ *   // Load next page
+ * }
+ * ```
+ */
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export interface FindOperationResult<T> extends OperationResult<T> {
+  // Future find-specific result properties can be added here without breaking changes
 }
 
 /**
@@ -413,31 +486,41 @@ export interface Operations<
   ): Promise<V | void>;
 
   /**
-   * Executes a finder method by name.
+   * Executes a finder method by name with optional pagination support.
+   *
+   * Supports hybrid pagination approach:
+   * - If finder returns FindOperationResult<V>, uses it directly (opt-in)
+   * - If finder returns V[], framework applies post-processing pagination
    *
    * @param finder - Name of the finder method
    * @param params - Parameters for the finder
    * @param locations - Optional location hierarchy to scope the query
-   * @returns Array of items found
+   * @param options - Optional pagination options (limit, offset)
+   * @returns Result containing items and pagination metadata
    *
    * @example
    * ```typescript
-   * // Find users by email
-   * const users = await operations.find('byEmail', { email: 'alice@example.com' });
+   * // Find users by email (no pagination)
+   * const result = await operations.find('byEmail', { email: 'alice@example.com' });
+   * const users = result.items;
    *
-   * // Find in specific location
-   * const comments = await operations.find(
+   * // Find with pagination
+   * const result = await operations.find(
    *   'byAuthor',
    *   { author: 'alice' },
-   *   [{kt: 'post', lk: 'post-123'}]
+   *   [{kt: 'post', lk: 'post-123'}],
+   *   { limit: 10, offset: 0 }
    * );
+   * const comments = result.items;
+   * const total = result.metadata.total;
    * ```
    */
   find(
     finder: string,
     params?: OperationParams,
-    locations?: LocKeyArray<L1, L2, L3, L4, L5> | []
-  ): Promise<V[]>;
+    locations?: LocKeyArray<L1, L2, L3, L4, L5> | [],
+    options?: FindOptions
+  ): Promise<FindOperationResult<V>>;
 
   /**
    * Executes a finder method and returns the first result.
