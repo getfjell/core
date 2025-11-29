@@ -1,7 +1,7 @@
 import { Item } from "../items";
 import { ComKey, LocKeyArray, PriKey } from "../keys";
 import { ItemQuery } from "../item/ItemQuery";
-import { AffectedKeys, AllOperationResult, AllOptions, CreateOptions, OperationParams, UpdateOptions } from "./Operations";
+import { AffectedKeys, AllOperationResult, AllOptions, CreateOptions, FindOperationResult, FindOptions, OperationParams, UpdateOptions } from "./Operations";
 
 /**
  * Get method signature - retrieves single item by key
@@ -156,7 +156,26 @@ export interface OneMethod<
 }
 
 /**
- * Find method signature - finds multiple items using finder
+ * Find method signature - finds multiple items using finder with optional pagination.
+ *
+ * Supports hybrid approach:
+ * - If finder returns FindOperationResult<V>, uses it directly (opt-in)
+ * - If finder returns V[], framework applies post-processing pagination
+ *
+ * @param finder - Name of the finder method
+ * @param params - Parameters for the finder
+ * @param locations - Optional location hierarchy to scope the query
+ * @param options - Optional pagination options (limit, offset)
+ * @returns Result containing items and pagination metadata
+ *
+ * @example
+ * ```typescript
+ * // Without pagination (returns all results)
+ * const result = await operations.find('byEmail', { email: 'test@example.com' });
+ *
+ * // With pagination
+ * const result = await operations.find('byEmail', { email: 'test@example.com' }, [], { limit: 10, offset: 0 });
+ * ```
  */
 export interface FindMethod<
   V extends Item<S, L1, L2, L3, L4, L5>,
@@ -170,8 +189,9 @@ export interface FindMethod<
   (
     finder: string,
     params: OperationParams,
-    locations?: LocKeyArray<L1, L2, L3, L4, L5> | []
-  ): Promise<V[]>;
+    locations?: LocKeyArray<L1, L2, L3, L4, L5> | [],
+    options?: FindOptions
+  ): Promise<FindOperationResult<V>>;
 }
 
 /**
@@ -194,12 +214,39 @@ export interface FindOneMethod<
 }
 
 /**
- * Finder method signature - finds multiple items
+ * Finder method signature - finds multiple items.
  *
- * @example
+ * Supports hybrid approach for pagination:
+ * - **Legacy signature**: Return `Promise<V[]>` - framework applies post-processing pagination
+ * - **Opt-in signature**: Return `Promise<FindOperationResult<V>>` - finder handles pagination at source
+ *
+ * @example Legacy finder (framework handles pagination)
  * ```typescript
  * const byEmailFinder: FinderMethod<User, 'user'> = async (params) => {
  *   return await database.findUsers({ email: params.email });
+ * };
+ * ```
+ *
+ * @example Opt-in finder (finder handles pagination)
+ * ```typescript
+ * const byEmailFinder: FinderMethod<User, 'user'> = async (params, locations, options) => {
+ *   const query = buildQuery({ email: params.email });
+ *   const total = await database.count(query);
+ *
+ *   if (options?.offset) query.offset(options.offset);
+ *   if (options?.limit) query.limit(options.limit);
+ *
+ *   const items = await database.find(query);
+ *   return {
+ *     items,
+ *     metadata: {
+ *       total,
+ *       returned: items.length,
+ *       offset: options?.offset ?? 0,
+ *       limit: options?.limit,
+ *       hasMore: (options?.offset ?? 0) + items.length < total
+ *     }
+ *   };
  * };
  * ```
  */
@@ -214,8 +261,9 @@ export interface FinderMethod<
 > {
   (
     params: OperationParams,
-    locations?: LocKeyArray<L1, L2, L3, L4, L5> | []
-  ): Promise<V[]>;
+    locations?: LocKeyArray<L1, L2, L3, L4, L5> | [],
+    options?: FindOptions
+  ): Promise<V[] | FindOperationResult<V>>;
 }
 
 /**
