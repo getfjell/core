@@ -31,9 +31,13 @@ export type {
   AffectedKeys,
   CreateOptions,
   UpdateOptions,
+  PaginationOptions,
   AllOptions,
+  FindOptions,
   PaginationMetadata,
-  AllOperationResult
+  OperationResult,
+  AllOperationResult,
+  FindOperationResult
 } from './operations/Operations';
 export {
   isPriKey as isOperationPriKey,

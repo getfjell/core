@@ -134,9 +134,50 @@ import {
   validateLocations, 
   validateKey, 
   validatePK, 
-  validateKeys 
+  validateKeys,
+  validateSchema,
+  SchemaValidator
 } from '@fjell/core/validation';
 ```
+
+#### Schema Validation (Zod, Yup, etc.)
+
+Universal schema validation that works with any validator matching the `SchemaValidator` interface. Zod is supported out of the box via duck typing:
+
+```typescript
+import { validateSchema } from '@fjell/core/validation';
+import { z } from 'zod';
+
+// Define a Zod schema
+const userSchema = z.object({
+  name: z.string().min(3),
+  age: z.number().min(18),
+  email: z.string().email().optional()
+});
+
+// Validate data before caching, sending to API, or persisting
+const validatedUser = await validateSchema(userData, userSchema);
+
+// Validation throws ValidationError with FieldError[] on failure
+try {
+  await validateSchema({ name: 'Al', age: 10 }, userSchema);
+} catch (error) {
+  if (error instanceof ValidationError) {
+    console.log(error.fieldErrors);
+    // [
+    //   { path: ['name'], message: 'String must contain at least 3 character(s)', code: 'too_small' },
+    //   { path: ['age'], message: 'Number must be greater than or equal to 18', code: 'too_small' }
+    // ]
+  }
+}
+```
+
+**Schema Validation Features:**
+- **Universal**: Works with Zod, Yup, Joi, or any validator matching the interface
+- **Type-Safe**: Full TypeScript support with type inference
+- **Error Transformation**: Automatically converts validator errors to Fjell `ValidationError`
+- **Async Support**: Handles both sync and async validation
+- **Available Everywhere**: Use in cache layers, APIs, persistence, or any system boundary
 
 #### Location Validation
 

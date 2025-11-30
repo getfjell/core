@@ -1,7 +1,7 @@
 import { Item } from "../items";
 import { PriKey } from "../keys";
 import { ItemQuery } from "../item/ItemQuery";
-import { AffectedKeys, AllOperationResult, AllOptions, OperationParams, Operations } from "./Operations";
+import { AffectedKeys, AllOperationResult, AllOptions, FindOperationResult, FindOptions, OperationParams, Operations } from "./Operations";
 
 /**
  * Primary Operations interface - specialized for primary (top-level) items only.
@@ -51,7 +51,7 @@ export interface PrimaryOperations<
   one(query?: ItemQuery): Promise<V | null>;
 
   // Finder operations - no locations
-  find(finder: string, params?: OperationParams): Promise<V[]>;
+  find(finder: string, params?: OperationParams, locations?: [], options?: FindOptions): Promise<FindOperationResult<V>>;
   findOne(finder: string, params?: OperationParams): Promise<V | null>;
 
   // CRUD operations - PriKey only

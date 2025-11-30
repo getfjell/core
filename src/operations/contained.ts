@@ -1,7 +1,7 @@
 import { Item } from "../items";
 import { ComKey, LocKeyArray } from "../keys";
 import { ItemQuery } from "../item/ItemQuery";
-import { AffectedKeys, AllOperationResult, AllOptions, OperationParams, Operations } from "./Operations";
+import { AffectedKeys, AllOperationResult, AllOptions, FindOperationResult, FindOptions, OperationParams, Operations } from "./Operations";
 
 /**
  * Contained Operations interface - specialized for contained (hierarchical) items only.
@@ -76,8 +76,9 @@ export interface ContainedOperations<
   find(
     finder: string,
     params: OperationParams | undefined,
-    locations: LocKeyArray<L1, L2, L3, L4, L5> | []
-  ): Promise<V[]>;
+    locations: LocKeyArray<L1, L2, L3, L4, L5> | [],
+    options?: FindOptions
+  ): Promise<FindOperationResult<V>>;
 
   findOne(
     finder: string,

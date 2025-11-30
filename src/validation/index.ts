@@ -7,10 +7,11 @@
  * - Items (Item key type validation)
  * - Queries (ItemQuery validation)
  * - Operation parameters (OperationParams validation)
+ * - Schema validation (Zod, Yup, etc.)
  */
 
 // Types
-export type { ValidationOptions, ValidationResult } from './types';
+export type { ValidationOptions, ValidationResult, SchemaValidator } from './types';
 
 // Location validation
 export { validateLocations, isValidLocations } from './LocationValidator';
@@ -29,4 +30,7 @@ export {
   validateActionName,
   validateFacetName
 } from './QueryValidator';
+
+// Schema validation
+export { validateSchema } from './schema';
 
