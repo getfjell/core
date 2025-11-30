@@ -28,7 +28,11 @@ describe('createFindWrapper', () => {
 
   describe('validation', () => {
     it('should accept valid finder name, params, and locations', async () => {
-      mockImplementation.mockResolvedValue([]);
+      const emptyResult = {
+        items: [],
+        metadata: { total: 0, returned: 0, offset: 0, hasMore: false }
+      };
+      mockImplementation.mockResolvedValue(emptyResult);
       const find = createFindWrapper(mockCoordinate, mockImplementation);
       
       await find(
@@ -40,17 +44,22 @@ describe('createFindWrapper', () => {
       expect(mockImplementation).toHaveBeenCalledWith(
         'byStatus',
         { status: 'active' },
-        [{ kt: 'org', lk: '123' }]
+        [{ kt: 'org', lk: '123' }],
+        undefined
       );
     });
 
     it('should accept empty params and locations', async () => {
-      mockImplementation.mockResolvedValue([]);
+      const emptyResult = {
+        items: [],
+        metadata: { total: 0, returned: 0, offset: 0, hasMore: false }
+      };
+      mockImplementation.mockResolvedValue(emptyResult);
       const find = createFindWrapper(mockCoordinate, mockImplementation);
       
       await find('byStatus', {}, []);
       
-      expect(mockImplementation).toHaveBeenCalledWith('byStatus', {}, []);
+      expect(mockImplementation).toHaveBeenCalledWith('byStatus', {}, [], undefined);
     });
 
     it('should reject empty finder name', async () => {
@@ -157,30 +166,42 @@ describe('createFindWrapper', () => {
 
   describe('parameter normalization', () => {
     it('should normalize undefined params to empty object', async () => {
-      mockImplementation.mockResolvedValue([]);
+      const emptyResult = {
+        items: [],
+        metadata: { total: 0, returned: 0, offset: 0, hasMore: false }
+      };
+      mockImplementation.mockResolvedValue(emptyResult);
       const find = createFindWrapper(mockCoordinate, mockImplementation);
       
       await find('byStatus', undefined, []);
       
-      expect(mockImplementation).toHaveBeenCalledWith('byStatus', {}, []);
+      expect(mockImplementation).toHaveBeenCalledWith('byStatus', {}, [], undefined);
     });
 
     it('should normalize undefined locations to empty array', async () => {
-      mockImplementation.mockResolvedValue([]);
+      const emptyResult = {
+        items: [],
+        metadata: { total: 0, returned: 0, offset: 0, hasMore: false }
+      };
+      mockImplementation.mockResolvedValue(emptyResult);
       const find = createFindWrapper(mockCoordinate, mockImplementation);
       
       await find('byStatus', {}, undefined);
       
-      expect(mockImplementation).toHaveBeenCalledWith('byStatus', {}, []);
+      expect(mockImplementation).toHaveBeenCalledWith('byStatus', {}, [], undefined);
     });
 
     it('should normalize both undefined params', async () => {
-      mockImplementation.mockResolvedValue([]);
+      const emptyResult = {
+        items: [],
+        metadata: { total: 0, returned: 0, offset: 0, hasMore: false }
+      };
+      mockImplementation.mockResolvedValue(emptyResult);
       const find = createFindWrapper(mockCoordinate, mockImplementation);
       
       await find('byStatus', undefined, undefined);
       
-      expect(mockImplementation).toHaveBeenCalledWith('byStatus', {}, []);
+      expect(mockImplementation).toHaveBeenCalledWith('byStatus', {}, [], undefined);
     });
   });
 
@@ -207,6 +228,8 @@ describe('createFindWrapper', () => {
         }
       ];
       
+      // Implementation can return array (legacy) or FindOperationResult (opt-in)
+      // Wrapper will handle both
       mockImplementation.mockResolvedValue(testItems);
       const find = createFindWrapper(mockCoordinate, mockImplementation);
       
@@ -219,9 +242,12 @@ describe('createFindWrapper', () => {
       expect(mockImplementation).toHaveBeenCalledWith(
         'byStatus',
         { status: 'active' },
-        [{ kt: 'org', lk: 'org1' }]
+        [{ kt: 'org', lk: 'org1' }],
+        undefined
       );
-      expect(result).toStrictEqual(testItems);
+      // Wrapper wraps array in FindOperationResult
+      expect(result.items).toStrictEqual(testItems);
+      expect(result.metadata.total).toBe(testItems.length);
     });
 
     it('should return empty array when implementation returns empty array', async () => {
@@ -230,7 +256,9 @@ describe('createFindWrapper', () => {
       
       const result = await find('byStatus', {}, []);
       
-      expect(result).toEqual([]);
+      // Wrapper wraps array in FindOperationResult
+      expect(result.items).toEqual([]);
+      expect(result.metadata.total).toBe(0);
     });
 
     it('should handle async implementation', async () => {
@@ -242,7 +270,9 @@ describe('createFindWrapper', () => {
       const find = createFindWrapper(mockCoordinate, mockImplementation);
       const result = await find('byStatus', {}, []);
       
-      expect(result).toEqual([]);
+      // Wrapper wraps array in FindOperationResult
+      expect(result.items).toEqual([]);
+      expect(result.metadata.total).toBe(0);
     });
   });
 
@@ -287,7 +317,7 @@ describe('createFindWrapper', () => {
       const errorHandler = vi.fn((_err, context) => {
         expect(context.operationName).toBe('find');
         expect(context.coordinate).toBe(mockCoordinate);
-        expect(context.params).toHaveLength(3);
+        expect(context.params).toHaveLength(4); // finder, params, locations, findOptions
         return new Error('Handled');
       });
       
@@ -345,6 +375,7 @@ describe('createFindWrapper', () => {
   describe('type safety', () => {
     it('should maintain proper typing for implementation', async () => {
       // This test verifies TypeScript compilation
+      // Implementation can return array (legacy) - wrapper will wrap it
       const typedImplementation = async (): Promise<TestItem[]> => {
         return [];
       };
@@ -355,7 +386,9 @@ describe('createFindWrapper', () => {
       );
       
       const result = await find('byStatus', {}, []);
-      expect(result).toEqual([]);
+      // Wrapper wraps array in FindOperationResult
+      expect(result.items).toEqual([]);
+      expect(result.metadata.total).toBe(0);
     });
   });
 });

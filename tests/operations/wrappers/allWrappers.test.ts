@@ -18,7 +18,7 @@ import {
   createUpdateWrapper,
   createUpsertWrapper
 } from '../../../src/operations/wrappers';
-import type { AllOperationResult, Item } from '../../../src';
+import type { AllOperationResult, FindOperationResult, Item } from '../../../src';
 import { type Coordinate, createCoordinate } from '../../../src/Coordinate';
 import type { ComKey, PriKey } from '../../../src/keys';
 
@@ -270,7 +270,11 @@ describe('Operation Wrappers - Comprehensive Suite', () => {
 
   describe('createFindWrapper', () => {
     it('should validate and execute find()', async () => {
-      const impl = vi.fn().mockResolvedValue([]);
+      const emptyResult: FindOperationResult<TestItem> = {
+        items: [],
+        metadata: { total: 0, returned: 0, offset: 0, hasMore: false }
+      };
+      const impl = vi.fn().mockResolvedValue(emptyResult);
       const find = createFindWrapper(mockCoordinate, impl);
       
       const result = await find(
@@ -279,16 +283,22 @@ describe('Operation Wrappers - Comprehensive Suite', () => {
         []
       );
       
-      expect(result).toEqual([]);
+      expect(result.items).toEqual([]);
+      expect(result.metadata.total).toBe(0);
       expect(impl).toHaveBeenCalledWith(
         'byStatus',
         { status: 'active' },
-        []
+        [],
+        undefined
       );
     });
 
     it('should reject invalid finder name', async () => {
-      const impl = vi.fn().mockResolvedValue([]);
+      const emptyResult: FindOperationResult<TestItem> = {
+        items: [],
+        metadata: { total: 0, returned: 0, offset: 0, hasMore: false }
+      };
+      const impl = vi.fn().mockResolvedValue(emptyResult);
       const find = createFindWrapper(mockCoordinate, impl);
       
       await expect(
@@ -297,16 +307,24 @@ describe('Operation Wrappers - Comprehensive Suite', () => {
     });
 
     it('should normalize undefined params', async () => {
-      const impl = vi.fn().mockResolvedValue([]);
+      const emptyResult: FindOperationResult<TestItem> = {
+        items: [],
+        metadata: { total: 0, returned: 0, offset: 0, hasMore: false }
+      };
+      const impl = vi.fn().mockResolvedValue(emptyResult);
       const find = createFindWrapper(mockCoordinate, impl);
       
       await find('byStatus', {}, []);
       
-      expect(impl).toHaveBeenCalledWith('byStatus', {}, []);
+      expect(impl).toHaveBeenCalledWith('byStatus', {}, [], undefined);
     });
 
     it('should reject invalid param types', async () => {
-      const impl = vi.fn().mockResolvedValue([]);
+      const emptyResult: FindOperationResult<TestItem> = {
+        items: [],
+        metadata: { total: 0, returned: 0, offset: 0, hasMore: false }
+      };
+      const impl = vi.fn().mockResolvedValue(emptyResult);
       const find = createFindWrapper(mockCoordinate, impl);
       
       await expect(
