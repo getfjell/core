@@ -34,7 +34,11 @@ const storeRegion: LocKeyArray<'store', 'region'> = [
 ];
 
 // Event builders
-const mkEvent = (key: PriKey<'product'> | ComKey<'product', 'store', 'region'>, eventType: 'create' | 'update' | 'delete' | 'action' = 'create', scopes: string[] = ['test']): BaseEvent<'product', 'store', 'region'> => ({
+const mkEvent = (
+  key: PriKey<'product'> | ComKey<'product', 'store', 'region'>,
+  eventType: 'create' | 'update' | 'delete' | 'action' = 'create',
+  scopes: string[] = ['test']
+): BaseEvent<'product', 'store', 'region'> => ({
   eventType,
   key,
   scopes,
@@ -48,7 +52,12 @@ const itemSub = (key: PriKey<'product'> | ComKey<'product', 'store', 'region'>, 
   eventTypes,
   scopes,
 });
-const locSub = (kta: ItemTypeArray<'product', 'store', 'region'> | ItemTypeArray<'product'>, location: LocKeyArray<'store', 'region'>, eventTypes?: string[], scopes?: string[]): Subscription<'product', 'store', 'region'> => ({
+const locSub = (
+  kta: ItemTypeArray<'product', 'store', 'region'> | ItemTypeArray<'product'>,
+  location: LocKeyArray<'store', 'region'>,
+  eventTypes?: string[],
+  scopes?: string[]
+): Subscription<'product', 'store', 'region'> => ({
   id: 'sub-2',
   kta: kta as any,
   location,

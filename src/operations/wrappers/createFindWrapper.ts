@@ -46,12 +46,12 @@ function applyPagination<T>(
   const limit = options?.limit;
 
   let paginatedItems = items;
-  
+
   // Apply offset
   if (offset > 0) {
     paginatedItems = paginatedItems.slice(offset);
   }
-  
+
   // Apply limit
   if (limit != null && limit >= 0) {
     paginatedItems = paginatedItems.slice(0, limit);
@@ -106,42 +106,42 @@ export function createFindWrapper<
   implementation: FindMethod<V, S, L1, L2, L3, L4, L5>,
   options: WrapperOptions = {}
 ): FindMethod<V, S, L1, L2, L3, L4, L5> {
-  
+
   const operationName = options.operationName || 'find';
-  
+
   return async (
     finder: string,
     params?: OperationParams,
     locations?: LocKeyArray<L1, L2, L3, L4, L5> | [],
     findOptions?: FindOptions
   ): Promise<FindOperationResult<V>> => {
-    
+
     if (options.debug) {
       logger.debug(`[${operationName}] Called:`, { finder, params, locations, findOptions });
     }
-    
+
     // Validate
     if (!options.skipValidation) {
       validateFinderName(finder, operationName);
       validateOperationParams(params, operationName);
       validateLocations(locations, coordinate, operationName);
     }
-    
+
     // Normalize
     const normalizedParams = params ?? {};
     const normalizedLocations = (locations ?? []) as LocKeyArray<L1, L2, L3, L4, L5> | [];
-    
+
     // Execute
     try {
       const result = await implementation(finder, normalizedParams, normalizedLocations, findOptions);
-      
+
       // Check if finder opted-in (returned FindOperationResult) or legacy (returned V[])
       if (isFindOperationResult<V>(result)) {
         // Finder opted-in: validate and return as-is
         if (options.debug) {
           logger.debug(`[${operationName}] Finder "${finder}" opted-in to pagination, found ${result.items.length} items (total: ${result.metadata.total})`);
         }
-        
+
         // Validate primary key types for all items
         if (!options.skipValidation) {
           const validatedItems = validatePK(result.items, coordinate.kta[0]) as V[];
@@ -150,14 +150,14 @@ export function createFindWrapper<
             metadata: result.metadata
           };
         }
-        
+
         return result;
       } else {
         // Legacy finder: apply post-processing pagination
         if (options.debug) {
           logger.debug(`[${operationName}] Finder "${finder}" using legacy signature, applying post-processing pagination`);
         }
-        
+
         // Validate primary key types for all items
         let validatedItems: V[];
         if (!options.skipValidation) {
@@ -165,11 +165,11 @@ export function createFindWrapper<
         } else {
           validatedItems = result as V[];
         }
-        
+
         // Apply pagination post-processing
         return applyPagination(validatedItems, findOptions);
       }
-      
+
     } catch (error) {
       if (options.onError) {
         const context: ErrorContext = {
@@ -179,9 +179,24 @@ export function createFindWrapper<
         };
         throw options.onError(error as Error, context);
       }
-      
+
+      // Enhanced error message for finder operations
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorStack = error instanceof Error ? error.stack : null;
+      const errorCause = error instanceof Error && 'cause' in error ? error.cause : null;
+
+      logger.error(`[${operationName}] Operation failed for finder "${finder}"`, {
+        finder,
+        params,
+        locations,
+        findOptions,
+        errorMessage,
+        errorStack,
+        errorCause
+      });
+
       throw new Error(
-        `[${operationName}] Operation failed for finder "${finder}": ${(error as Error).message}`,
+        `[${operationName}] Operation failed for finder "${finder}": ${errorMessage}`,
         { cause: error }
       );
     }
