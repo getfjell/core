@@ -3,7 +3,7 @@ import { isItemKeyEqual, isPriKey } from "../key/KUtils";
 import { ComKey, PriKey } from "../keys";
 import LibLogger from "../logger";
 import * as luxon from 'luxon';
-import { CompoundCondition, Condition, EventQuery, isCondition, ItemQuery, QueryParams } from "./ItemQuery";
+import { CompoundCondition, Condition, EventQuery, isCondition, ItemQuery, OrderBy, QueryParams } from "./ItemQuery";
 
 const logger = LibLogger.get('IQUtils');
 
@@ -45,6 +45,9 @@ export const queryToParams = (query: ItemQuery): QueryParams => {
   if (query.events) {
     params.events = JSON.stringify(query.events);
   }
+  if (query.orderBy) {
+    params.orderBy = JSON.stringify(query.orderBy);
+  }
   return params;
 }
 
@@ -84,6 +87,9 @@ export const paramsToQuery = (params: QueryParams): ItemQuery => {
   }
   if (params.events) {
     query.events = JSON.parse(params.events as string, dateTimeReviver) as Record<string, { start?: Date, end?: Date }>;
+  }
+  if (params.orderBy) {
+    query.orderBy = JSON.parse(params.orderBy as string) as OrderBy[];
   }
   return query;
 }
@@ -158,7 +164,7 @@ const isConditionQueryMatch = <
     return false;
   }
   logger.debug('Comparing Condition', { propKey, itemProp: item[propKey], queryCondition });
-  
+
   // Handle null values - only == and != make sense with null
   if (queryCondition.value === null) {
     if (queryCondition.operator === '==') {
@@ -171,7 +177,7 @@ const isConditionQueryMatch = <
       );
     }
   }
-  
+
   let result = false;
   switch (queryCondition.operator) {
     case '==':
