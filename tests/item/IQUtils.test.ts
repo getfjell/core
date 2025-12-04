@@ -99,6 +99,85 @@ describe('Testing IQUtils', () => {
       const expected = { refs: JSON.stringify({ turbo: profileKey }) };
       expect(params).toStrictEqual(expected);
     });
+
+    test('testing query with single orderBy ascending', () => {
+      const query: ItemQuery = { orderBy: [{ field: 'name', direction: 'asc' }] };
+      const params: QueryParams = queryToParams(query);
+
+      const expected = { orderBy: JSON.stringify([{ field: 'name', direction: 'asc' }]) };
+      expect(params).toStrictEqual(expected);
+    });
+
+    test('testing query with single orderBy descending', () => {
+      const query: ItemQuery = { orderBy: [{ field: 'submittedAt', direction: 'desc' }] };
+      const params: QueryParams = queryToParams(query);
+
+      const expected = { orderBy: JSON.stringify([{ field: 'submittedAt', direction: 'desc' }]) };
+      expect(params).toStrictEqual(expected);
+    });
+
+    test('testing query with multiple orderBy fields', () => {
+      const query: ItemQuery = {
+        orderBy: [
+          { field: 'submittedAt', direction: 'desc' },
+          { field: 'id', direction: 'asc' }
+        ]
+      };
+      const params: QueryParams = queryToParams(query);
+
+      const expected = {
+        orderBy: JSON.stringify([
+          { field: 'submittedAt', direction: 'desc' },
+          { field: 'id', direction: 'asc' }
+        ])
+      };
+      expect(params).toStrictEqual(expected);
+    });
+
+    test('testing query with orderBy and other parameters', () => {
+      const query: ItemQuery = {
+        orderBy: [{ field: 'name', direction: 'asc' }],
+        limit: 10,
+        offset: 5,
+        compoundCondition: {
+          compoundType: 'AND',
+          conditions: [{ column: 'status', value: 'active', operator: '==' }]
+        }
+      };
+      const params: QueryParams = queryToParams(query);
+
+      expect(params.orderBy).toBe(JSON.stringify([{ field: 'name', direction: 'asc' }]));
+      expect(params.limit).toBe(10);
+      expect(params.offset).toBe(5);
+      expect(params.compoundCondition).toBe(JSON.stringify({
+        compoundType: 'AND',
+        conditions: [{ column: 'status', value: 'active', operator: '==' }]
+      }));
+    });
+
+    test('testing query with empty orderBy array', () => {
+      const query: ItemQuery = { orderBy: [] };
+      const params: QueryParams = queryToParams(query);
+
+      const expected = { orderBy: JSON.stringify([]) };
+      expect(params).toStrictEqual(expected);
+    });
+
+    test('testing query without orderBy (should not add to params)', () => {
+      const query: ItemQuery = { limit: 10 };
+      const params: QueryParams = queryToParams(query);
+
+      expect(params.orderBy).toBeUndefined();
+      expect(params.limit).toBe(10);
+    });
+
+    test('testing query with orderBy undefined (should not add to params)', () => {
+      const query: ItemQuery = { limit: 10, orderBy: undefined };
+      const params: QueryParams = queryToParams(query);
+
+      expect(params.orderBy).toBeUndefined();
+      expect(params.limit).toBe(10);
+    });
   });
 
   describe('Testing paramsToQuery', () => {
@@ -185,6 +264,171 @@ describe('Testing IQUtils', () => {
 
       const expected = { refs: { turbo: profileKey } };
       expect(query).toStrictEqual(expected);
+    });
+
+    test('testing params with single orderBy ascending', () => {
+      const params: QueryParams = {
+        orderBy: JSON.stringify([{ field: 'name', direction: 'asc' }])
+      };
+      const query: ItemQuery = paramsToQuery(params);
+
+      const expected = { orderBy: [{ field: 'name', direction: 'asc' }] };
+      expect(query).toStrictEqual(expected);
+    });
+
+    test('testing params with single orderBy descending', () => {
+      const params: QueryParams = {
+        orderBy: JSON.stringify([{ field: 'submittedAt', direction: 'desc' }])
+      };
+      const query: ItemQuery = paramsToQuery(params);
+
+      const expected = { orderBy: [{ field: 'submittedAt', direction: 'desc' }] };
+      expect(query).toStrictEqual(expected);
+    });
+
+    test('testing params with multiple orderBy fields', () => {
+      const params: QueryParams = {
+        orderBy: JSON.stringify([
+          { field: 'submittedAt', direction: 'desc' },
+          { field: 'id', direction: 'asc' }
+        ])
+      };
+      const query: ItemQuery = paramsToQuery(params);
+
+      const expected = {
+        orderBy: [
+          { field: 'submittedAt', direction: 'desc' },
+          { field: 'id', direction: 'asc' }
+        ]
+      };
+      expect(query).toStrictEqual(expected);
+    });
+
+    test('testing params with orderBy and other parameters', () => {
+      const params: QueryParams = {
+        orderBy: JSON.stringify([{ field: 'name', direction: 'asc' }]),
+        limit: 10,
+        offset: 5,
+        compoundCondition: JSON.stringify({
+          compoundType: 'AND',
+          conditions: [{ column: 'status', value: 'active', operator: '==' }]
+        })
+      };
+      const query: ItemQuery = paramsToQuery(params);
+
+      expect(query.orderBy).toEqual([{ field: 'name', direction: 'asc' }]);
+      expect(query.limit).toBe(10);
+      expect(query.offset).toBe(5);
+      expect(query.compoundCondition).toEqual({
+        compoundType: 'AND',
+        conditions: [{ column: 'status', value: 'active', operator: '==' }]
+      });
+    });
+
+    test('testing params without orderBy (should not add to query)', () => {
+      const params: QueryParams = { limit: 10 };
+      const query: ItemQuery = paramsToQuery(params);
+
+      expect(query.orderBy).toBeUndefined();
+      expect(query.limit).toBe(10);
+    });
+
+    test('testing params with empty orderBy array', () => {
+      const params: QueryParams = { orderBy: JSON.stringify([]) };
+      const query: ItemQuery = paramsToQuery(params);
+
+      const expected = { orderBy: [] };
+      expect(query).toStrictEqual(expected);
+    });
+  });
+
+  describe('Testing orderBy round-trip conversion', () => {
+    test('queryToParams → paramsToQuery should preserve single orderBy', () => {
+      const originalQuery: ItemQuery = {
+        orderBy: [{ field: 'name', direction: 'asc' }]
+      };
+      const params = queryToParams(originalQuery);
+      const roundTripQuery = paramsToQuery(params);
+
+      expect(roundTripQuery.orderBy).toEqual(originalQuery.orderBy);
+    });
+
+    test('queryToParams → paramsToQuery should preserve multiple orderBy fields', () => {
+      const originalQuery: ItemQuery = {
+        orderBy: [
+          { field: 'submittedAt', direction: 'desc' },
+          { field: 'id', direction: 'asc' }
+        ]
+      };
+      const params = queryToParams(originalQuery);
+      const roundTripQuery = paramsToQuery(params);
+
+      expect(roundTripQuery.orderBy).toEqual(originalQuery.orderBy);
+    });
+
+    test('queryToParams → paramsToQuery should preserve orderBy with other parameters', () => {
+      const originalQuery: ItemQuery = {
+        orderBy: [{ field: 'name', direction: 'asc' }],
+        limit: 10,
+        offset: 5,
+        compoundCondition: {
+          compoundType: 'AND',
+          conditions: [{ column: 'status', value: 'active', operator: '==' }]
+        },
+        refs: { turbo: profileKey }
+      };
+      const params = queryToParams(originalQuery);
+      const roundTripQuery = paramsToQuery(params);
+
+      expect(roundTripQuery.orderBy).toEqual(originalQuery.orderBy);
+      expect(roundTripQuery.limit).toBe(originalQuery.limit);
+      expect(roundTripQuery.offset).toBe(originalQuery.offset);
+      expect(roundTripQuery.compoundCondition).toEqual(originalQuery.compoundCondition);
+      expect(roundTripQuery.refs).toEqual(originalQuery.refs);
+    });
+
+    test('multiple round trips should not corrupt orderBy data', () => {
+      const originalQuery: ItemQuery = {
+        orderBy: [
+          { field: 'submittedAt', direction: 'desc' },
+          { field: 'id', direction: 'asc' },
+          { field: 'name', direction: 'asc' }
+        ]
+      };
+
+      let currentQuery = originalQuery;
+      // Perform 5 round trips
+      for (let i = 0; i < 5; i++) {
+        const params = queryToParams(currentQuery);
+        currentQuery = paramsToQuery(params);
+      }
+
+      expect(currentQuery.orderBy).toEqual(originalQuery.orderBy);
+      expect(currentQuery.orderBy?.length).toBe(3);
+      expect(currentQuery.orderBy?.[0].field).toBe('submittedAt');
+      expect(currentQuery.orderBy?.[0].direction).toBe('desc');
+      expect(currentQuery.orderBy?.[1].field).toBe('id');
+      expect(currentQuery.orderBy?.[1].direction).toBe('asc');
+      expect(currentQuery.orderBy?.[2].field).toBe('name');
+      expect(currentQuery.orderBy?.[2].direction).toBe('asc');
+    });
+
+    test('round trip with empty orderBy array should preserve empty array', () => {
+      const originalQuery: ItemQuery = { orderBy: [] };
+      const params = queryToParams(originalQuery);
+      const roundTripQuery = paramsToQuery(params);
+
+      expect(roundTripQuery.orderBy).toEqual([]);
+    });
+
+    test('round trip without orderBy should not add orderBy', () => {
+      const originalQuery: ItemQuery = { limit: 10, offset: 5 };
+      const params = queryToParams(originalQuery);
+      const roundTripQuery = paramsToQuery(params);
+
+      expect(roundTripQuery.orderBy).toBeUndefined();
+      expect(roundTripQuery.limit).toBe(10);
+      expect(roundTripQuery.offset).toBe(5);
     });
   });
 
