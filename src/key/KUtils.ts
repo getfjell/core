@@ -219,9 +219,7 @@ export const generateKeyArray = <
   const keys: Array<PriKey<S> | LocKey<L1 | L2 | L3 | L4 | L5>> = [];
 
   if (isComKey(key) || isPriKey(key)) {
-    // console.log('it is an item key');
     if (isComKey(key)) {
-      //  console.log('it is a composite key');
       const comKey = key as ComKey<S, L1, L2, L3, L4, L5>;
       keys.push({ pk: comKey.pk, kt: comKey.kt });
       for (let i = 0; i < comKey.loc.length; i++) {
@@ -231,10 +229,8 @@ export const generateKeyArray = <
       keys.push(key as PriKey<S>);
     }
   } else {
-    // console.log('is is an array, length: ' + key.length);
     const locKeys = key as LocKey<L1 | L2 | L3 | L4 | L5>[];
     for (let i = 0; i < locKeys.length; i++) {
-      // console.log('Pushing a key');
       keys.push(locKeys[i]);
     }
   }
