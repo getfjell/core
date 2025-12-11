@@ -41,7 +41,7 @@
     "docs:test": "cd docs && npm run test"
   },
   "dependencies": {
-    "@fjell/logging": "^4.4.60",
+    "@fjell/logging": "^4.4.62",
     "deepmerge": "^4.3.1",
     "luxon": "^3.7.2"
   },
