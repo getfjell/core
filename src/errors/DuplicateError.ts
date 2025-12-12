@@ -45,6 +45,9 @@ export class DuplicateError extends ActionError {
         })
       },
       details: {
+        suggestedAction: duplicateField
+          ? `An item with this ${duplicateField} already exists. Use a different ${duplicateField} value or update the existing item.`
+          : 'An item with this key already exists. Use a different key or update the existing item using upsert.',
         retryable: false,
         conflictingValue: duplicateField
       },
