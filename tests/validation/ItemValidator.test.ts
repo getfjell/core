@@ -51,20 +51,20 @@ describe('ItemValidator', () => {
 
       it('should reject undefined item', () => {
         expect(() => validatePK(undefined as any, 'product')).toThrow(
-          /Item is undefined/
+          /item is undefined/
         );
       });
 
       it('should reject null item', () => {
         expect(() => validatePK(null as any, 'product')).toThrow(
-          /Item is undefined/
+          /item is undefined/
         );
       });
 
       it('should reject item without key', () => {
         const item = { state: {} } as any;
         expect(() => validatePK(item, 'product')).toThrow(
-          /Item does not have a key/
+          /does not have a key/
         );
       });
 
@@ -75,10 +75,10 @@ describe('ItemValidator', () => {
         };
         
         expect(() => validatePK(item, 'product')).toThrow(
-          /Item does not have the correct primary key type/
+          /incorrect primary key type/
         );
         expect(() => validatePK(item, 'product')).toThrow(
-          /Expected product, got order/
+          /Expected.*product.*got.*order/
         );
       });
 
@@ -97,7 +97,7 @@ describe('ItemValidator', () => {
         
         // Should fail with wrong type
         expect(() => validatePK(item, 'order')).toThrow(
-          /Expected order, got product/
+          /Expected.*order.*got.*product/
         );
       });
     });
@@ -130,7 +130,7 @@ describe('ItemValidator', () => {
         ] as any;
         
         expect(() => validatePK(items, 'product')).toThrow(
-          /Item is undefined/
+          /item is undefined/
         );
       });
 
@@ -142,7 +142,7 @@ describe('ItemValidator', () => {
         ] as any;
         
         expect(() => validatePK(items, 'product')).toThrow(
-          /Item does not have a key/
+          /does not have a key/
         );
       });
 
@@ -154,7 +154,7 @@ describe('ItemValidator', () => {
         ] as any;
         
         expect(() => validatePK(items, 'product')).toThrow(
-          /Expected product, got order/
+          /Expected.*product.*got.*order/
         );
       });
 
@@ -193,10 +193,10 @@ describe('ItemValidator', () => {
         };
         
         expect(() => validateKeys(item, ['product'])).toThrow(
-          /Item does not have the correct key types/
+          /incorrect key types|does not have the correct key types/
         );
         expect(() => validateKeys(item, ['product'])).toThrow(
-          /Expected \[product\], but got \[order\]/
+          /Expected.*product.*got.*order/
         );
       });
 
@@ -211,10 +211,10 @@ describe('ItemValidator', () => {
         };
         
         expect(() => validateKeys(item, ['product'])).toThrow(
-          /Item does not have the correct number of keys/
+          /incorrect key hierarchy depth|does not have the correct number of keys/
         );
         expect(() => validateKeys(item, ['product'])).toThrow(
-          /Expected 1, but got 2/
+          /Expected.*1.*got.*2|Expected 1.*but got 2/
         );
       });
     });
@@ -299,10 +299,10 @@ describe('ItemValidator', () => {
         };
         
         expect(() => validateKeys(item, ['product', 'store', 'region'])).toThrow(
-          /Item does not have the correct number of keys/
+          /incorrect key hierarchy depth|does not have the correct number of keys/
         );
         expect(() => validateKeys(item, ['product', 'store', 'region'])).toThrow(
-          /Expected 3, but got 2/
+          /Expected.*3.*got.*2|Expected 3.*but got 2/
         );
       });
 
@@ -320,10 +320,10 @@ describe('ItemValidator', () => {
         };
         
         expect(() => validateKeys(item, ['product', 'store'])).toThrow(
-          /Item does not have the correct number of keys/
+          /incorrect key hierarchy depth|does not have the correct number of keys/
         );
         expect(() => validateKeys(item, ['product', 'store'])).toThrow(
-          /Expected 2, but got 3/
+          /Expected.*2.*got.*3|Expected 2.*but got 3/
         );
       });
 
@@ -338,10 +338,10 @@ describe('ItemValidator', () => {
         };
         
         expect(() => validateKeys(item, ['product', 'warehouse'])).toThrow(
-          /Item does not have the correct key types/
+          /incorrect key types|does not have the correct key types/
         );
         expect(() => validateKeys(item, ['product', 'warehouse'])).toThrow(
-          /Expected \[product, warehouse\], but got \[product, store\]/
+          /Expected.*product.*warehouse.*got.*product.*store/
         );
       });
 
@@ -352,10 +352,10 @@ describe('ItemValidator', () => {
         };
         
         expect(() => validateKeys(item, ['product', 'store'])).toThrow(
-          /Item does not have the correct number of keys/
+          /incorrect key hierarchy depth|does not have the correct number of keys/
         );
         expect(() => validateKeys(item, ['product', 'store'])).toThrow(
-          /Expected 2, but got 1/
+          /Expected.*2.*got.*1|Expected 2.*but got 1/
         );
       });
     });

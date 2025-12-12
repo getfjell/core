@@ -68,7 +68,18 @@ export function createAllWrapper<
       // Validate pagination options
       if (allOptions && 'limit' in allOptions && allOptions.limit != null) {
         if (!Number.isInteger(allOptions.limit) || allOptions.limit < 1) {
-          throw new Error(`[${operationName}] limit must be a positive integer, got: ${allOptions.limit}`);
+          logger.error(`Invalid limit parameter in ${operationName}`, {
+            component: 'core',
+            wrapper: 'createAllWrapper',
+            operation: operationName,
+            limit: allOptions.limit,
+            limitType: typeof allOptions.limit,
+            suggestion: 'Use a positive integer (1, 2, 3, ...) for limit parameter'
+          });
+          throw new Error(
+            `[${operationName}] limit must be a positive integer, got: ${allOptions.limit} (${typeof allOptions.limit}). ` +
+            `Suggestion: Use limit: 10 or similar positive integer value.`
+          );
         }
       }
       if (allOptions && 'offset' in allOptions && allOptions.offset != null) {

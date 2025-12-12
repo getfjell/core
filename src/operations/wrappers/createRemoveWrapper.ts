@@ -81,6 +81,18 @@ export function createRemoveWrapper<
         throw options.onError(error as Error, context);
       }
       
+      logger.error(`[${operationName}] Operation failed in wrapper`, {
+        component: 'core',
+        wrapper: 'createRemoveWrapper',
+        operation: operationName,
+        key: JSON.stringify(key),
+        itemType: coordinate.kta[0],
+        errorType: (error as Error).constructor?.name,
+        errorMessage: (error as Error).message,
+        suggestion: 'Check item exists, delete permissions, referential integrity, and database connectivity',
+        coordinate: JSON.stringify(coordinate)
+      });
+      
       throw new Error(
         `[${operationName}] Operation failed: ${(error as Error).message}`,
         { cause: error }

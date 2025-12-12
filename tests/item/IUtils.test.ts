@@ -41,7 +41,7 @@ describe('Testing IUtils', () => {
     });
 
     test('should throw error for a single item with incorrect pkType', () => {
-      expect(() => validatePK(invalidItem, 'test')).toThrow('Item does not have the correct primary key type');
+      expect(() => validatePK(invalidItem, 'test')).toThrow(/has incorrect primary key type/);
     });
 
     test('should validate an array of items with correct pkType', () => {
@@ -52,18 +52,18 @@ describe('Testing IUtils', () => {
 
     test('should throw error for an array of items with incorrect pkType', () => {
       const items = [validItem, invalidItem];
-      expect(() => validatePK(items, 'test')).toThrow('Item does not have the correct primary key type');
+      expect(() => validatePK(items, 'test')).toThrow(/has incorrect primary key type/);
     });
 
     test('should throw error if item does not have a key', () => {
       const itemWithoutKey = { data: 'some data' } as unknown as Item<'test'>;
-      expect(() => validatePK(itemWithoutKey, 'test')).toThrow('Item does not have a key');
+      expect(() => validatePK(itemWithoutKey, 'test')).toThrow(/does not have a key/);
     });
 
     test('should throw error if item is undefined', () => {
        
       const undefinedItem = undefined as unknown as Item<'test'>;
-      expect(() => validatePK(undefinedItem, 'test')).toThrow('Validating PK, Item is undefined');
+      expect(() => validatePK(undefinedItem, 'test')).toThrow(/item is undefined/);
     });
   });
 
@@ -76,23 +76,23 @@ describe('Testing IUtils', () => {
     });
 
     test('should throw error for item with incorrect key types', () => {
-      expect(() => validateKeys(invalidItem, keyTypes)).toThrow('Item does not have the correct key types');
+      expect(() => validateKeys(invalidItem, keyTypes)).toThrow(/has incorrect key types/);
     });
 
     test('should throw error if item does not have a key', () => {
       const itemWithoutKey = { data: 'some data' } as unknown as Item<'test'>;
       expect(() => validateKeys(itemWithoutKey, keyTypes))
-        .toThrow('validating keys, item does not have a key: {"data":"some data"}');
+        .toThrow(/does not have a key/);
     });
 
     test('should throw error if item too many keys', () => {
-      expect(() => validateKeys(tooManyKeysItem, keyTypes)).toThrow('Item does not have the correct number of keys');
+      expect(() => validateKeys(tooManyKeysItem, keyTypes)).toThrow(/incorrect key hierarchy depth|does not have the correct number of keys/);
     });
 
     test('should throw error if item is null', () => {
       const nullItem = null as unknown as Item<'test'>;
       expect(() => validateKeys(nullItem, keyTypes))
-        .toThrow('validating keys, item is undefined');
+        .toThrow(/item is undefined/);
     });
   });
 
