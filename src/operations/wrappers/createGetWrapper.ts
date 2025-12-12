@@ -90,8 +90,28 @@ export function createGetWrapper<
       // Preserve NotFoundError instances - don't wrap them
       // This allows upsert and other operations to properly detect "not found" cases
       if (error instanceof NotFoundError) {
+        logger.debug(`[${operationName}] Item not found`, {
+          component: 'core',
+          wrapper: 'createGetWrapper',
+          operation: operationName,
+          key: JSON.stringify(key),
+          itemType: coordinate.kta[0],
+          note: 'This is expected behavior when item does not exist'
+        });
         throw error;
       }
+      
+      logger.error(`[${operationName}] Operation failed in wrapper`, {
+        component: 'core',
+        wrapper: 'createGetWrapper',
+        operation: operationName,
+        key: JSON.stringify(key),
+        itemType: coordinate.kta[0],
+        errorType: (error as Error).constructor?.name,
+        errorMessage: (error as Error).message,
+        suggestion: 'Check key validity, database connectivity, and implementation error handling',
+        coordinate: JSON.stringify(coordinate)
+      });
       
       throw new Error(
         `[${operationName}] Operation failed: ${(error as Error).message}`,
