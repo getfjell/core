@@ -417,7 +417,11 @@ export const locKeyArrayToItemKey =
       const comKey = { kt: priKey.kt, pk: priKey.pk, loc: locs as unknown as LocKeyArray<L2, L3, L4, L5> };
       return comKey as ComKey<L1, L2, L3, L4, L5>;
     } else {
-      throw new Error('locKeyArrayToItemKey: lka is undefined or empty');
+      throw new Error(
+        'locKeyArrayToItemKey: lka is undefined or empty. ' +
+        'Expected non-empty LocKeyArray. ' +
+        'Suggestion: Ensure you are passing a valid location key array, not undefined/null/empty array.'
+      );
     }
   }
 

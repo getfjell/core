@@ -23,7 +23,9 @@ export class ValidationError extends ActionError {
       context: { itemType: '' }, // Will be filled by wrapper
       details: {
         validOptions,
-        suggestedAction,
+        suggestedAction: suggestedAction || (validOptions && validOptions.length > 0
+          ? `Valid options are: ${validOptions.join(', ')}. Please use one of these values.`
+          : 'Check the validation requirements and ensure all fields meet the required format, type, and constraints.'),
         retryable: true,
         conflictingValue,
         fieldErrors

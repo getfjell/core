@@ -98,6 +98,20 @@ export function createActionWrapper<
         throw options.onError(error as Error, context);
       }
       
+      logger.error(`[${operationName}] Action failed in wrapper`, {
+        component: 'core',
+        wrapper: 'createActionWrapper',
+        operation: operationName,
+        action,
+        key: JSON.stringify(key),
+        params: JSON.stringify(params),
+        itemType: coordinate.kta[0],
+        errorType: (error as Error).constructor?.name,
+        errorMessage: (error as Error).message,
+        suggestion: 'Check action name is valid, item exists, and action implementation',
+        coordinate: JSON.stringify(coordinate)
+      });
+      
       throw new Error(
         `[${operationName}] Action "${action}" failed: ${(error as Error).message}`,
         { cause: error }

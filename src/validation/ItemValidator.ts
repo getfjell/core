@@ -28,18 +28,47 @@ const validatePKForItem = <
   L5 extends string = never,
 >(item: Item<S, L1, L2, L3, L4, L5>, pkType: S): Item<S, L1, L2, L3, L4, L5> => {
   if (!item) {
-    logger.error('Validating PK, Item is undefined', { item });
-    throw new Error('Validating PK, Item is undefined');
+    logger.error('Item validation failed - item is undefined', {
+      component: 'core',
+      operation: 'validatePK',
+      expectedType: pkType,
+      item,
+      suggestion: 'Ensure the operation returns a valid item object, not undefined/null'
+    });
+    throw new Error(
+      `Item validation failed: item is undefined. Expected item of type '${pkType}'. ` +
+      `This usually indicates a database operation returned null/undefined unexpectedly.`
+    );
   }
   if (!item.key) {
-    logger.error('Validating PK, Item does not have a key', { item });
-    throw new Error('Validating PK, Item does not have a key');
+    logger.error('Item validation failed - item missing key', {
+      component: 'core',
+      operation: 'validatePK',
+      expectedType: pkType,
+      item,
+      suggestion: 'Ensure the item has a valid key property with kt and pk fields'
+    });
+    throw new Error(
+      `Item validation failed: item does not have a key property. Expected key with type '${pkType}'. ` +
+      `Item: ${JSON.stringify(item)}. This indicates a database processing error.`
+    );
   }
 
   const keyTypeArray = toKeyTypeArray(item.key as ComKey<S, L1, L2, L3, L4, L5> | PriKey<S>);
   if (keyTypeArray[0] !== pkType) {
-    logger.error('Key Type Array Mismatch', { keyTypeArray, pkType });
-    throw new Error(`Item does not have the correct primary key type. Expected ${pkType}, got ${keyTypeArray[0]}`);
+    logger.error('Key type mismatch during validation', {
+      component: 'core',
+      operation: 'validatePK',
+      expectedType: pkType,
+      actualType: keyTypeArray[0],
+      keyTypeArray,
+      itemKey: item.key,
+      suggestion: `Ensure the item key has kt: '${pkType}', not '${keyTypeArray[0]}'`
+    });
+    throw new Error(
+      `Item has incorrect primary key type. Expected '${pkType}', got '${keyTypeArray[0]}'. ` +
+      `Key: ${JSON.stringify(item.key)}. This indicates a data model mismatch.`
+    );
   }
   return item;
 };
@@ -110,21 +139,64 @@ export const validateKeys = <
   ): Item<S, L1, L2, L3, L4, L5> => {
   logger.trace('Checking Return Type', { item });
   if (!item) {
-    throw new Error('validating keys, item is undefined');
+    logger.error('Key validation failed - item is undefined', {
+      component: 'core',
+      operation: 'validateKeys',
+      expectedKeyTypes: keyTypes,
+      suggestion: 'Ensure the operation returns a valid item object, not undefined/null'
+    });
+    throw new Error(
+      `Key validation failed: item is undefined. Expected item with key types [${keyTypes.join(', ')}]. ` +
+      `This usually indicates a database operation returned null/undefined unexpectedly.`
+    );
   }
   if (!item.key) {
-    throw new Error('validating keys, item does not have a key: ' + JSON.stringify(item));
+    logger.error('Key validation failed - item missing key', {
+      component: 'core',
+      operation: 'validateKeys',
+      expectedKeyTypes: keyTypes,
+      item: JSON.stringify(item),
+      suggestion: 'Ensure the item has a valid key property'
+    });
+    throw new Error(
+      `Key validation failed: item does not have a key property. Expected key with types [${keyTypes.join(', ')}]. ` +
+      `Item: ${JSON.stringify(item)}. This indicates a database processing error.`
+    );
   }
 
   const keyTypeArray = toKeyTypeArray(item.key as ComKey<S, L1, L2, L3, L4, L5> | PriKey<S>);
   if (keyTypeArray.length !== keyTypes.length) {
-    throw new Error(`Item does not have the correct number of keys. Expected ${keyTypes.length}, but got ${keyTypeArray.length}`);
+    logger.error('Key hierarchy depth mismatch', {
+      component: 'core',
+      operation: 'validateKeys',
+      expectedKeyTypes: keyTypes,
+      expectedDepth: keyTypes.length,
+      actualKeyTypes: keyTypeArray,
+      actualDepth: keyTypeArray.length,
+      itemKey: item.key,
+      suggestion: `Check coordinate definition. Expected hierarchy depth of ${keyTypes.length}, got ${keyTypeArray.length}`
+    });
+    throw new Error(
+      `Item has incorrect key hierarchy depth. Expected ${keyTypes.length} levels [${keyTypes.join(' > ')}], ` +
+      `but got ${keyTypeArray.length} levels [${keyTypeArray.join(' > ')}]. ` +
+      `Key: ${JSON.stringify(item.key)}. This indicates a coordinate/hierarchy mismatch.`
+    );
   }
 
   const match: boolean = JSON.stringify(keyTypeArray) === JSON.stringify(keyTypes);
   if (!match) {
-    logger.error('Key Type Array Mismatch', { keyTypeArray, thisKeyTypes: keyTypes });
-    throw new Error(`Item does not have the correct key types. Expected [${keyTypes.join(', ')}], but got [${keyTypeArray.join(', ')}]`);
+    logger.error('Key Type Array Mismatch', {
+      component: 'core',
+      operation: 'validateKeys',
+      expectedKeyTypes: keyTypes,
+      actualKeyTypes: keyTypeArray,
+      itemKey: item.key,
+      suggestion: `Ensure item key matches expected hierarchy: [${keyTypes.join(' > ')}]`
+    });
+    throw new Error(
+      `Item has incorrect key types. Expected [${keyTypes.join(' > ')}], but got [${keyTypeArray.join(' > ')}]. ` +
+      `Key: ${JSON.stringify(item.key)}. This indicates a data model mismatch.`
+    );
   }
   return item;
 };
