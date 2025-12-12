@@ -107,6 +107,19 @@ export function createCreateWrapper<
         throw wrapperOptions.onError(error as Error, context);
       }
       
+      logger.error(`[${operationName}] Operation failed in wrapper`, {
+        component: 'core',
+        wrapper: 'createCreateWrapper',
+        operation: operationName,
+        itemType: coordinate.kta[0],
+        hasKey: createOptions && 'key' in createOptions,
+        hasLocations: createOptions && 'locations' in createOptions,
+        errorType: (error as Error).constructor?.name,
+        errorMessage: (error as Error).message,
+        suggestion: 'Check validation rules, required fields, unique constraints, and database connectivity',
+        coordinate: JSON.stringify(coordinate)
+      });
+      
       throw new Error(
         `[${operationName}] Operation failed: ${(error as Error).message}`,
         { cause: error }

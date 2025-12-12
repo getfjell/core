@@ -14,7 +14,10 @@ export class NotFoundError extends ActionError {
         itemType,
         key: typeof key === 'object' ? key : { primary: key }
       },
-      details: { retryable: false },
+      details: {
+        suggestedAction: 'Verify the item ID/key is correct, check if the item was deleted, or create the item if it should exist.',
+        retryable: false
+      },
       technical: {
         timestamp: new Date().toISOString()
       }

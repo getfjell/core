@@ -12,7 +12,7 @@ export class BusinessLogicError extends ActionError {
       operation: { type: 'action', name: '', params: {} },
       context: { itemType: '' },
       details: {
-        suggestedAction,
+        suggestedAction: suggestedAction || 'Review the business logic requirements and ensure all conditions are met before retrying.',
         retryable
       },
       technical: {
