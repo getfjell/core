@@ -5,6 +5,23 @@ export { AItemService } from "./AItemService";
 export { createCoordinate } from "./Coordinate";
 export * from "./dictionary";
 
+// Re-export common types from @fjell/types for convenience
+export type {
+  Coordinate,
+  Item,
+  ItemTypeArray,
+  PriKey,
+  ComKey,
+  LocKey,
+  LocKeyArray,
+  ItemQuery,
+  AllOptions,
+  CreateOptions,
+  UpdateOptions,
+  FindOptions,
+  PaginationOptions
+} from "@fjell/types";
+
 // Utilities and Implementations
 export {
   isComKey,
