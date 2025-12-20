@@ -1,7 +1,7 @@
 {
   "name": "@fjell/core",
   "description": "Core Item and Key Framework for Fjell",
-  "version": "4.4.75",
+  "version": "4.4.76",
   "keywords": [
     "core",
     "fjell"
@@ -37,8 +37,8 @@
   },
   "dependencies": {
     "@fjell/logging": "^4.4.66",
-    "@fjell/types": "4.4.5",
-    "@fjell/validation": "4.4.2",
+    "@fjell/types": "4.4.6",
+    "@fjell/validation": "4.4.3",
     "deepmerge": "^4.3.1",
     "luxon": "^3.7.2"
   },
