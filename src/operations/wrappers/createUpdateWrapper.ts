@@ -4,11 +4,8 @@
  * Provides automatic validation for update() operation parameters.
  */
 
-import type { Item } from "../../items";
-import type { ComKey, PriKey } from "../../keys";
-import type { Coordinate } from "../../Coordinate";
+import { ComKey, Coordinate, Item, PriKey, UpdateMethod, UpdateOptions } from "@fjell/types";
 import { validateKey, validatePK } from "../../validation";
-import type { UpdateMethod } from "../methods";
 import type { ErrorContext, WrapperOptions } from "./types";
 import LibLogger from "../../logger";
 
@@ -51,7 +48,7 @@ export function createUpdateWrapper<
   return async (
     key: PriKey<S> | ComKey<S, L1, L2, L3, L4, L5>,
     item: Partial<Item<S, L1, L2, L3, L4, L5>>,
-    updateOptions?: import('../Operations').UpdateOptions
+    updateOptions?: UpdateOptions
   ): Promise<V> => {
     
     if (options.debug) {

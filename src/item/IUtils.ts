@@ -1,14 +1,12 @@
 /* eslint-disable indent */
  
-import { Item } from "../items";
-import { isComKey, isPriKey } from "../key/KUtils";
-import { ComKey, PriKey } from "../keys";
+import { ComKey, isComKey, isPriKey, Item, PriKey } from "@fjell/types";
 
 /**
  * @deprecated Use validatePK from @fjell/core/validation instead
  * Re-exported for backward compatibility
  */
-export { validatePK, validateKeys } from '../validation/ItemValidator';
+export { validatePK, validateKeys } from '../validation';
 
 // validatePK and validateKeys have been moved to ../validation/ItemValidator.ts
 // They are re-exported above for backward compatibility

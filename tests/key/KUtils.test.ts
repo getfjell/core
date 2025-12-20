@@ -206,13 +206,13 @@ describe('KUtils', () => {
       expect(isComKey(key)).toBe(true);
     });
 
-    it('should return true for composite key with empty loc array', () => {
+    it('should return false for composite key with empty loc array', () => {
       const key = {
         pk: '123-145-156-167-132',
         kt: 'typeA',
         loc: []
       };
-      expect(isComKey(key)).toBe(true);
+      expect(isComKey(key)).toBe(false);
     });
 
     it('should return false for invalid composite key', () => {
@@ -227,9 +227,9 @@ describe('KUtils', () => {
       expect(isPriKey(key)).toBe(true);
     });
 
-    it('should return false for key with empty loc array', () => {
+    it('should return true for key with empty loc array', () => {
       const key = { pk: '123-145-156-167-132', kt: 'typeA', loc: [] };
-      expect(isPriKey(key)).toBe(false);
+      expect(isPriKey(key)).toBe(true);
     });
 
     it('should return false for invalid primary key', () => {

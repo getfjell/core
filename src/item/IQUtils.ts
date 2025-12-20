@@ -1,9 +1,7 @@
-import { Item, Reference, ReferenceItem, References } from "../items";
-import { isItemKeyEqual, isPriKey } from "../key/KUtils";
-import { ComKey, PriKey } from "../keys";
+import { ComKey, CompoundCondition, Condition, EventQuery, isCondition, isPriKey, Item, ItemQuery, OrderBy, PriKey, QueryParams, Reference, ReferenceItem, References } from "@fjell/types";
+import { isItemKeyEqual } from "../key/KUtils";
 import LibLogger from "../logger";
 import * as luxon from 'luxon';
-import { CompoundCondition, Condition, EventQuery, isCondition, ItemQuery, OrderBy, QueryParams } from "./ItemQuery";
 
 const logger = LibLogger.get('IQUtils');
 

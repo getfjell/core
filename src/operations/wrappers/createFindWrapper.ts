@@ -7,12 +7,8 @@
  * - If finder returns V[], applies post-processing pagination
  */
 
-import type { Item } from "../../items";
-import type { LocKeyArray } from "../../keys";
-import type { Coordinate } from "../../Coordinate";
-import type { FindOperationResult, FindOptions, OperationParams, PaginationOptions } from "../Operations";
+import { Coordinate, FindMethod, FindOperationResult, FindOptions, Item, LocKeyArray, OperationParams, PaginationOptions } from "@fjell/types";
 import { validateFinderName, validateLocations, validateOperationParams, validatePK } from "../../validation";
-import type { FindMethod } from "../methods";
 import type { ErrorContext, WrapperOptions } from "./types";
 import LibLogger from "../../logger";
 

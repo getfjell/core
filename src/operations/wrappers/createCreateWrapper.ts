@@ -4,11 +4,8 @@
  * Provides automatic validation for create() operation parameters.
  */
 
-import type { Item } from "../../items";
-import type { Coordinate } from "../../Coordinate";
+import { Coordinate, CreateMethod, CreateOptions, Item } from "@fjell/types";
 import { validateKey, validateLocations, validatePK } from "../../validation";
-import type { CreateMethod } from "../methods";
-import type { CreateOptions } from "../Operations";
 import type { ErrorContext, WrapperOptions } from "./types";
 import LibLogger from "../../logger";
 

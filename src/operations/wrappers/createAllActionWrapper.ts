@@ -4,12 +4,8 @@
  * Provides automatic validation for allAction() operation parameters.
  */
 
-import type { Item } from "../../items";
-import type { LocKeyArray } from "../../keys";
-import type { Coordinate } from "../../Coordinate";
-import type { AffectedKeys, OperationParams } from "../Operations";
+import { AffectedKeys, AllActionOperationMethod, Coordinate, Item, LocKeyArray, OperationParams } from "@fjell/types";
 import { validateActionName, validateLocations, validateOperationParams, validatePK } from "../../validation";
-import type { AllActionOperationMethod } from "../methods";
 import type { ErrorContext, WrapperOptions } from "./types";
 import LibLogger from "../../logger";
 

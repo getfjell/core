@@ -1,5 +1,4 @@
-import { ComKey, PriKey } from '../keys';
-import { Item } from '../items';
+import { ComKey, Item, PriKey } from '@fjell/types';
 
 /**
  * Base event interface that all events extend.

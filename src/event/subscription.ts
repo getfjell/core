@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { ComKey, ItemTypeArray, LocKeyArray, PriKey } from '../keys';
-import { ItemQuery } from '../item/ItemQuery';
+import { ComKey, ItemQuery, ItemTypeArray, LocKeyArray, PriKey } from '@fjell/types';
 
 /**
  * Base subscription interface that all subscription types extend.

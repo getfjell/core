@@ -1,5 +1,4 @@
-import { ComKey, ItemTypeArray, LocKeyArray, PriKey } from '../keys';
-import { isComKey, isPriKey } from '../operations/Operations';
+import { ComKey, isComKey, isPriKey, ItemTypeArray, LocKeyArray, PriKey } from '@fjell/types';
 import { BaseEvent } from './events';
 import { isItemSubscription, isLocationSubscription, Subscription } from './subscription';
 

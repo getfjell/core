@@ -1,6 +1,6 @@
 import { ActionError, ErrorInfo } from "../errors/ActionError";
 import { OperationContext } from "./OperationContext";
-import { ComKey, PriKey } from "../keys";
+import { ComKey, PriKey } from "@fjell/types";
 
 /**
  * Executes an async operation and enhances any ActionError thrown with operation context.
