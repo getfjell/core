@@ -1,7 +1,7 @@
 {
   "name": "@fjell/core",
   "description": "Core Item and Key Framework for Fjell",
-  "version": "4.4.76-dev.0",
+  "version": "4.4.76",
   "keywords": [
     "core",
     "fjell"
