@@ -137,7 +137,7 @@ import {
   validateKeys,
   validateSchema,
   SchemaValidator
-} from '@fjell/core/validation';
+} from '@fjell/validation';
 ```
 
 #### Schema Validation (Zod, Yup, etc.)
@@ -145,7 +145,7 @@ import {
 Universal schema validation that works with any validator matching the `SchemaValidator` interface. Zod is supported out of the box via duck typing:
 
 ```typescript
-import { validateSchema } from '@fjell/core/validation';
+import { validateSchema } from '@fjell/validation';
 import { z } from 'zod';
 
 // Define a Zod schema
@@ -184,7 +184,7 @@ try {
 Validates that location key arrays match the expected coordinate hierarchy:
 
 ```typescript
-import { validateLocations } from '@fjell/core/validation';
+import { validateLocations } from '@fjell/validation';
 
 // Validate location array order
 validateLocations(
@@ -194,7 +194,7 @@ validateLocations(
 );
 
 // Non-throwing validation
-import { isValidLocations } from '@fjell/core/validation';
+import { isValidLocations } from '@fjell/validation';
 const result = isValidLocations(
   [{ kt: 'store', lk: 'store-1' }],
   coordinate,
@@ -210,7 +210,7 @@ if (!result.valid) {
 Validates PriKey and ComKey structures match library type:
 
 ```typescript
-import { validateKey, validatePriKey, validateComKey } from '@fjell/core/validation';
+import { validateKey, validatePriKey, validateComKey } from '@fjell/validation';
 
 // Validate any key type
 validateKey(key, coordinate, 'get');
@@ -225,7 +225,7 @@ validateComKey(comKey, coordinate, 'remove');
 Validates Item keys match expected types:
 
 ```typescript
-import { validatePK, validateKeys } from '@fjell/core/validation';
+import { validatePK, validateKeys } from '@fjell/validation';
 
 // Validate item has correct primary key type
 const validatedItem = validatePK(item, 'product');

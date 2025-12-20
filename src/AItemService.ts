@@ -1,4 +1,4 @@
-import { AllItemTypeArrays } from "./keys";
+import { AllItemTypeArrays } from "@fjell/types";
 
 export class AItemService<
   S extends string,

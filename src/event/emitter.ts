@@ -1,5 +1,4 @@
-import { ComKey, ItemTypeArray, LocKeyArray, PriKey } from '../keys';
-import { Item } from '../items';
+import { ComKey, Item, ItemTypeArray, LocKeyArray, PriKey } from '@fjell/types';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ActionEvent, BaseEvent, CreateEvent, DeleteEvent, UpdateEvent } from './events';
 import { Subscription, SubscriptionOptions } from './subscription';

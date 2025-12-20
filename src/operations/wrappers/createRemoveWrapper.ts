@@ -4,11 +4,8 @@
  * Provides automatic validation for remove() operation parameters.
  */
 
-import type { Item } from "../../items";
-import type { ComKey, PriKey } from "../../keys";
-import type { Coordinate } from "../../Coordinate";
-import { validateKey } from "../../validation";
-import type { RemoveMethod } from "../methods";
+import { ComKey, Coordinate, Item, PriKey, RemoveMethod } from "@fjell/types";
+import { validateKey } from "@fjell/validation";
 import type { ErrorContext, WrapperOptions } from "./types";
 import LibLogger from "../../logger";
 

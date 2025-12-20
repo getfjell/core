@@ -4,11 +4,8 @@
  * Provides automatic validation for get() operation parameters.
  */
 
-import type { Item } from "../../items";
-import type { ComKey, PriKey } from "../../keys";
-import type { Coordinate } from "../../Coordinate";
-import { validateKey, validatePK } from "../../validation";
-import type { GetMethod } from "../methods";
+import { ComKey, Coordinate, GetMethod, Item, PriKey } from "@fjell/types";
+import { validateKey, validatePK } from "@fjell/validation";
 import type { ErrorContext, WrapperOptions } from "./types";
 import LibLogger from "../../logger";
 import { NotFoundError } from "../../errors";

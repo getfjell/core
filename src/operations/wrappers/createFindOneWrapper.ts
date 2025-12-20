@@ -4,12 +4,8 @@
  * Provides automatic validation for findOne() operation parameters.
  */
 
-import type { Item } from "../../items";
-import type { LocKeyArray } from "../../keys";
-import type { Coordinate } from "../../Coordinate";
-import type { OperationParams } from "../Operations";
-import { validateFinderName, validateLocations, validateOperationParams, validatePK } from "../../validation";
-import type { FindOneMethod } from "../methods";
+import { Coordinate, FindOneMethod, Item, LocKeyArray, OperationParams } from "@fjell/types";
+import { validateFinderName, validateLocations, validateOperationParams, validatePK } from "@fjell/validation";
 import type { ErrorContext, WrapperOptions } from "./types";
 import LibLogger from "../../logger";
 

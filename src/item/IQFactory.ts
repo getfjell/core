@@ -7,7 +7,7 @@ import {
   isCondition,
   ItemQuery,
   OrderDirection
-} from "./ItemQuery";
+} from "@fjell/types";
 
 export class IQFactory {
 
