@@ -4,12 +4,8 @@
  * Provides automatic validation for action() operation parameters.
  */
 
-import type { Item } from "../../items";
-import type { ComKey, PriKey } from "../../keys";
-import type { Coordinate } from "../../Coordinate";
-import type { AffectedKeys, OperationParams } from "../Operations";
-import { validateActionName, validateKey, validateOperationParams, validatePK } from "../../validation";
-import type { ActionOperationMethod } from "../methods";
+import { ActionOperationMethod, AffectedKeys, ComKey, Coordinate, Item, OperationParams, PriKey } from "@fjell/types";
+import { validateActionName, validateKey, validateOperationParams, validatePK } from "@fjell/validation";
 import type { ErrorContext, WrapperOptions } from "./types";
 import LibLogger from "../../logger";
 

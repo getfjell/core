@@ -1,4 +1,4 @@
-import { ComKey, LocKeyArray, PriKey } from '../keys';
+import { ComKey, LocKeyArray, PriKey } from '@fjell/types';
 import type { ErrorInfo } from '../errors/ActionError';
 
 export interface OperationContext {

@@ -4,11 +4,8 @@
  * Provides automatic validation for allFacet() operation parameters.
  */
 
-import type { LocKeyArray } from "../../keys";
-import type { Coordinate } from "../../Coordinate";
-import type { OperationParams } from "../Operations";
-import { validateFacetName, validateLocations, validateOperationParams } from "../../validation";
-import type { AllFacetOperationMethod } from "../methods";
+import { AllFacetOperationMethod, Coordinate, LocKeyArray, OperationParams } from "@fjell/types";
+import { validateFacetName, validateLocations, validateOperationParams } from "@fjell/validation";
 import type { ErrorContext, WrapperOptions } from "./types";
 import LibLogger from "../../logger";
 

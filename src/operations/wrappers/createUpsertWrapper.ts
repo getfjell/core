@@ -4,12 +4,9 @@
  * Provides automatic validation for upsert() operation parameters.
  */
 
-import type { Coordinate } from "../../Coordinate";
-import type { Item } from "../../items";
-import type { ComKey, LocKeyArray, PriKey } from "../../keys";
+import { ComKey, Coordinate, Item, LocKeyArray, PriKey, UpdateOptions, UpsertMethod } from "@fjell/types";
 import LibLogger from "../../logger";
-import { validateKey, validatePK } from "../../validation";
-import type { UpsertMethod } from "../methods";
+import { validateKey, validateLocations, validatePK } from "@fjell/validation";
 import type { ErrorContext, WrapperOptions } from "./types";
 
 const logger = LibLogger.get('operations', 'wrappers', 'upsert');
@@ -52,7 +49,7 @@ export function createUpsertWrapper<
     key: PriKey<S> | ComKey<S, L1, L2, L3, L4, L5>,
     item: Partial<Item<S, L1, L2, L3, L4, L5>>,
     locations?: LocKeyArray<L1, L2, L3, L4, L5>,
-    updateOptions?: import('../Operations').UpdateOptions
+    updateOptions?: UpdateOptions
   ): Promise<V> => {
     
     if (options.debug) {
@@ -62,6 +59,10 @@ export function createUpsertWrapper<
     // Validate
     if (!options.skipValidation) {
       validateKey(key, coordinate, operationName);
+      
+      if (locations) {
+        validateLocations(locations, coordinate, operationName);
+      }
       
       if (!item || typeof item !== 'object' || Array.isArray(item)) {
         throw new Error(

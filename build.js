@@ -38,16 +38,7 @@ await build({
   outfile: 'dist/index.js',
 });
 
-// Build validation module
-console.log('Building validation module...');
-await build({
-  ...buildConfig,
-  entryPoints: ['src/validation/index.ts'],
-  outfile: 'dist/validation/index.js',
-});
-
 console.log('Build completed successfully!');
 console.log(`- Cross-platform build: dist/index.js`);
-console.log(`- Validation module: dist/validation/index.js`);
-console.log(`- TypeScript declarations: dist/index.d.ts & dist/validation/*.d.ts`);
+console.log(`- TypeScript declarations: dist/index.d.ts`);
 console.log('This build works in both Node.js and browser environments');

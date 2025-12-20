@@ -4,12 +4,8 @@
  * Provides automatic validation for one() operation parameters.
  */
 
-import type { Item } from "../../items";
-import type { ItemQuery } from "../../item/ItemQuery";
-import type { LocKeyArray } from "../../keys";
-import type { Coordinate } from "../../Coordinate";
-import { validateLocations, validatePK, validateQuery } from "../../validation";
-import type { OneMethod } from "../methods";
+import { Coordinate, Item, ItemQuery, LocKeyArray, OneMethod } from "@fjell/types";
+import { validateLocations, validatePK, validateQuery } from "@fjell/validation";
 import type { ErrorContext, WrapperOptions } from "./types";
 import LibLogger from "../../logger";
 

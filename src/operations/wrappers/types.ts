@@ -4,7 +4,7 @@
  * These wrappers provide automatic parameter validation for all Operations methods.
  */
 
-import type { Coordinate } from "../../Coordinate";
+import { Coordinate } from "@fjell/types";
 
 /**
  * Options for configuring wrapper behavior

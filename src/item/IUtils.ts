@@ -1,17 +1,7 @@
 /* eslint-disable indent */
  
-import { Item } from "../items";
+import { ComKey, Item, PriKey } from "@fjell/types";
 import { isComKey, isPriKey } from "../key/KUtils";
-import { ComKey, PriKey } from "../keys";
-
-/**
- * @deprecated Use validatePK from @fjell/core/validation instead
- * Re-exported for backward compatibility
- */
-export { validatePK, validateKeys } from '../validation/ItemValidator';
-
-// validatePK and validateKeys have been moved to ../validation/ItemValidator.ts
-// They are re-exported above for backward compatibility
 
 export const isPriItem = <
   S extends string,

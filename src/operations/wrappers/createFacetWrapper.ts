@@ -4,11 +4,8 @@
  * Provides automatic validation for facet() operation parameters.
  */
 
-import type { ComKey, PriKey } from "../../keys";
-import type { Coordinate } from "../../Coordinate";
-import type { OperationParams } from "../Operations";
-import { validateFacetName, validateKey, validateOperationParams } from "../../validation";
-import type { FacetOperationMethod } from "../methods";
+import { ComKey, Coordinate, FacetOperationMethod, OperationParams, PriKey } from "@fjell/types";
+import { validateFacetName, validateKey, validateOperationParams } from "@fjell/validation";
 import type { ErrorContext, WrapperOptions } from "./types";
 import LibLogger from "../../logger";
 

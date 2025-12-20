@@ -4,11 +4,22 @@ import {
   LocKey,
   LocKeyArray,
   PriKey
-} from "../keys";
+} from "@fjell/types";
 
 import LibLogger from "../logger";
 
 const logger = LibLogger.get('KUtils');
+
+// Re-export type guards with more robust runtime checks for any input
+export const isComKey = (key: any): key is ComKey<any, any, any, any, any, any> => {
+  return key !== null && typeof key === 'object' &&
+    'kt' in key && 'pk' in key && 'loc' in key && Array.isArray(key.loc) && key.loc.length > 0;
+};
+
+export const isPriKey = (key: any): key is PriKey<any> => {
+  return key !== null && typeof key === 'object' &&
+    'kt' in key && 'pk' in key && (!('loc' in key) || !key.loc || (Array.isArray(key.loc) && key.loc.length === 0));
+};
 
 // Normalize a key value to string for consistent comparison and hashing
 const normalizeKeyValue = (value: string | number): string => {
@@ -189,18 +200,6 @@ export const isItemKey = (key: any): boolean => {
   return key !== undefined && (isComKey(key) || isPriKey(key));
 }
 
-export const isComKey = (key: any): boolean => {
-  logger.trace('isComKey', { key });
-  return key !== undefined &&
-    (key.pk !== undefined && key.kt !== undefined) && (key.loc !== undefined && Array.isArray(key.loc));
-}
-
-export const isPriKey = (key: any): boolean => {
-  logger.trace('isPriKey', { key });
-  return key !== undefined &&
-    (key.pk !== undefined && key.kt !== undefined) && (key.loc === undefined);
-}
-
 export const isLocKey = (key: any): boolean => {
   logger.trace('isLocKey', { key });
   return key !== undefined && (key.lk !== undefined && key.kt !== undefined);
@@ -218,8 +217,8 @@ export const generateKeyArray = <
   logger.trace('generateKeyArray', { key });
   const keys: Array<PriKey<S> | LocKey<L1 | L2 | L3 | L4 | L5>> = [];
 
-  if (isComKey(key) || isPriKey(key)) {
-    if (isComKey(key)) {
+  if (isComKey(key as any) || isPriKey(key as any)) {
+    if (isComKey(key as any)) {
       const comKey = key as ComKey<S, L1, L2, L3, L4, L5>;
       keys.push({ pk: comKey.pk, kt: comKey.kt });
       for (let i = 0; i < comKey.loc.length; i++) {
@@ -288,10 +287,10 @@ export const extractKeyTypeArray = <
   string[] => {
   logger.trace('extractKeyTypeArray', { key });
 
-  if (isComKey(key)) {
+  if (isComKey(key as any)) {
     const ck = key as ComKey<S, L1, L2, L3, L4, L5>;
     return [ck.kt, ...ck.loc.map((l: LocKey<L1 | L2 | L3 | L4 | L5>) => l.kt)];
-  } else if (isPriKey(key)) {
+  } else if (isPriKey(key as any)) {
     return [(key as PriKey<S>).kt];
   } else if (Array.isArray(key)) {
     // This is a LocKeyArray
@@ -466,7 +465,7 @@ export const isValidComKey = <
   L5 extends string = never
 >(key: ComKey<S, L1, L2, L3, L4, L5>): boolean => {
   return (key !== undefined
-    && key !== null) && isValidPriKey(key) && isValidLocKeyArray(key.loc as Array<LocKey<L1 | L2 | L3 | L4 | L5>>);
+    && key !== null) && isValidPriKey(key as any) && isValidLocKeyArray(key.loc as Array<LocKey<L1 | L2 | L3 | L4 | L5>>);
 }
 
 export const isValidItemKey = <
@@ -477,6 +476,8 @@ export const isValidItemKey = <
   L4 extends string = never,
   L5 extends string = never
 >(key: ComKey<S, L1, L2, L3, L4, L5> | PriKey<S>): boolean => {
+  if (key === null) throw new Error('Key cannot be null');
+  if (key === undefined) return false;
   return (isComKey(key) &&
     isValidComKey(key as ComKey<S, L1, L2, L3, L4, L5>)) || (isPriKey(key) && isValidPriKey(key as PriKey<S>));
 }

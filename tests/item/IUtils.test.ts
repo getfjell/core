@@ -1,6 +1,6 @@
-import { isComItem, isPriItem, validateKeys, validatePK } from '../../src/item/IUtils';
+import { isComItem, isPriItem } from '../../src/item/IUtils';
 import { Item } from '../../src/items';
-import { AllItemTypeArrays, ComKey } from '../../src/keys';
+import { ComKey } from '../../src/keys';
 import { describe, expect, test } from 'vitest';
 
 describe('Testing IUtils', () => {
@@ -13,88 +13,6 @@ describe('Testing IUtils', () => {
       deleted: { at: null }
     }
   };
-
-  const invalidItem: Item<'test'> = {
-    key: { kt: 'wrong', pk: '1-1-1-1-1' },
-    data: 'some data',
-    events: {
-      created: { at: new Date(), by: { kt: 'test', pk: '1-1-1-1-1' } },
-      updated: { at: new Date(), by: { kt: 'test', pk: '1-1-1-1-1' } },
-      deleted: { at: null }
-    }
-  } as unknown as Item<'test'>;
-
-  const tooManyKeysItem: Item<'test'> = {
-    key: { kt: 'wrong', pk: '1-1-1-1-1', loc: [{ kt: 'random', lk: '4-4-4-4-4' }] },
-    data: 'some data',
-    events: {
-      created: { at: new Date(), by: { kt: 'test', pk: '1-1-1-1-1' } },
-      updated: { at: new Date(), by: { kt: 'test', pk: '1-1-1-1-1' } },
-      deleted: { at: null }
-    }
-  } as unknown as Item<'test'>;
-
-  describe('Testing validatePK', () => {
-    test('should validate a single item with correct pkType', () => {
-      const result = validatePK(validItem, 'test');
-      expect(result).toEqual(validItem);
-    });
-
-    test('should throw error for a single item with incorrect pkType', () => {
-      expect(() => validatePK(invalidItem, 'test')).toThrow(/has incorrect primary key type/);
-    });
-
-    test('should validate an array of items with correct pkType', () => {
-      const items = [validItem, validItem];
-      const result = validatePK(items, 'test');
-      expect(result).toEqual(items);
-    });
-
-    test('should throw error for an array of items with incorrect pkType', () => {
-      const items = [validItem, invalidItem];
-      expect(() => validatePK(items, 'test')).toThrow(/has incorrect primary key type/);
-    });
-
-    test('should throw error if item does not have a key', () => {
-      const itemWithoutKey = { data: 'some data' } as unknown as Item<'test'>;
-      expect(() => validatePK(itemWithoutKey, 'test')).toThrow(/does not have a key/);
-    });
-
-    test('should throw error if item is undefined', () => {
-       
-      const undefinedItem = undefined as unknown as Item<'test'>;
-      expect(() => validatePK(undefinedItem, 'test')).toThrow(/item is undefined/);
-    });
-  });
-
-  describe('Testing validateKeys', () => {
-    const keyTypes: AllItemTypeArrays<'test'> = ['test'];
-
-    test('should validate item with correct key types', () => {
-      const result = validateKeys(validItem, keyTypes);
-      expect(result).toEqual(validItem);
-    });
-
-    test('should throw error for item with incorrect key types', () => {
-      expect(() => validateKeys(invalidItem, keyTypes)).toThrow(/has incorrect key types/);
-    });
-
-    test('should throw error if item does not have a key', () => {
-      const itemWithoutKey = { data: 'some data' } as unknown as Item<'test'>;
-      expect(() => validateKeys(itemWithoutKey, keyTypes))
-        .toThrow(/does not have a key/);
-    });
-
-    test('should throw error if item too many keys', () => {
-      expect(() => validateKeys(tooManyKeysItem, keyTypes)).toThrow(/incorrect key hierarchy depth|does not have the correct number of keys/);
-    });
-
-    test('should throw error if item is null', () => {
-      const nullItem = null as unknown as Item<'test'>;
-      expect(() => validateKeys(nullItem, keyTypes))
-        .toThrow(/item is undefined/);
-    });
-  });
 
   describe('Testing isPriItem', () => {
     test('should return true for item with primary key', () => {
