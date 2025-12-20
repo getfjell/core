@@ -1,8 +1,5 @@
-import type { ItemTypeArray } from "@fjell/types";
+import { Coordinate, ItemTypeArray } from "@fjell/types";
 import LibLogger from "./logger";
-import { Coordinate } from "@fjell/types/Coordinate";
-
-export type { Coordinate } from "@fjell/types/Coordinate";
 
 const logger = LibLogger.get("Coordinate");
 

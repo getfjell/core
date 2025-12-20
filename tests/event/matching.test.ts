@@ -118,7 +118,7 @@ describe('event/matching', () => {
       expect(!doesKeyMatch(a, b)).toBe(true);
     });
     it('rejects when types differ (PriKey vs ComKey)', () => {
-      expect(doesKeyMatch(priKey('p1'), comKey('p1', []))).toBe(false);
+      expect(doesKeyMatch(priKey('p1'), comKey('p1', [{ kt: 'store', lk: 's1' }]))).toBe(false);
     });
   });
 

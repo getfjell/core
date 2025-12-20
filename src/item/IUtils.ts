@@ -1,6 +1,7 @@
 /* eslint-disable indent */
  
-import { ComKey, isComKey, isPriKey, Item, PriKey } from "@fjell/types";
+import { ComKey, Item, PriKey } from "@fjell/types";
+import { isComKey, isPriKey } from "../key/KUtils";
 
 export const isPriItem = <
   S extends string,

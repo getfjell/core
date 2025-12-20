@@ -1,9 +1,8 @@
 // Framework Major Components
-export * from '@fjell/types';
 export { IQFactory } from './item/IQFactory';
 export { IFactory } from './item/IFactory';
 export { AItemService } from "./AItemService";
-export { Coordinate, createCoordinate } from "./Coordinate";
+export { createCoordinate } from "./Coordinate";
 export * from "./dictionary";
 
 // Utilities and Implementations

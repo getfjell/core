@@ -1,5 +1,5 @@
-import { ComKey, CompoundCondition, Condition, EventQuery, isCondition, isPriKey, Item, ItemQuery, OrderBy, PriKey, QueryParams, Reference, ReferenceItem, References } from "@fjell/types";
-import { isItemKeyEqual } from "../key/KUtils";
+import { ComKey, CompoundCondition, Condition, EventQuery, isCondition, Item, ItemQuery, OrderBy, PriKey, QueryParams, Reference, ReferenceItem, References } from "@fjell/types";
+import { isItemKeyEqual, isPriKey } from "../key/KUtils";
 import LibLogger from "../logger";
 import * as luxon from 'luxon';
 
@@ -54,7 +54,7 @@ const dateTimeReviver = function (key: string, value: string) {
   if (typeof value === 'string') {
     const parsedDate = luxon.DateTime.fromISO(value);
     if (parsedDate.isValid) {
-      return parsedDate.toJSDate();;
+      return parsedDate.toJSDate();
     }
   }
   return value;
