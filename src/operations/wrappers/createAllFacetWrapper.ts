@@ -5,7 +5,7 @@
  */
 
 import { AllFacetOperationMethod, Coordinate, LocKeyArray, OperationParams } from "@fjell/types";
-import { validateFacetName, validateLocations, validateOperationParams } from "../../validation";
+import { validateFacetName, validateLocations, validateOperationParams } from "@fjell/validation";
 import type { ErrorContext, WrapperOptions } from "./types";
 import LibLogger from "../../logger";
 

@@ -5,7 +5,7 @@
  */
 
 import { ComKey, Coordinate, FacetOperationMethod, OperationParams, PriKey } from "@fjell/types";
-import { validateFacetName, validateKey, validateOperationParams } from "../../validation";
+import { validateFacetName, validateKey, validateOperationParams } from "@fjell/validation";
 import type { ErrorContext, WrapperOptions } from "./types";
 import LibLogger from "../../logger";
 

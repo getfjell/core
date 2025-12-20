@@ -5,7 +5,7 @@
  */
 
 import { Coordinate, FindOneMethod, Item, LocKeyArray, OperationParams } from "@fjell/types";
-import { validateFinderName, validateLocations, validateOperationParams, validatePK } from "../../validation";
+import { validateFinderName, validateLocations, validateOperationParams, validatePK } from "@fjell/validation";
 import type { ErrorContext, WrapperOptions } from "./types";
 import LibLogger from "../../logger";
 

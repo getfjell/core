@@ -6,7 +6,7 @@
 
 import { ComKey, Coordinate, Item, LocKeyArray, PriKey, UpdateOptions, UpsertMethod } from "@fjell/types";
 import LibLogger from "../../logger";
-import { validateKey, validateLocations, validatePK } from "../../validation";
+import { validateKey, validateLocations, validatePK } from "@fjell/validation";
 import type { ErrorContext, WrapperOptions } from "./types";
 
 const logger = LibLogger.get('operations', 'wrappers', 'upsert');

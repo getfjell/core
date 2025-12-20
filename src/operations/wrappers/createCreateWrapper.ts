@@ -5,7 +5,7 @@
  */
 
 import { Coordinate, CreateMethod, CreateOptions, Item } from "@fjell/types";
-import { validateKey, validateLocations, validatePK } from "../../validation";
+import { validateKey, validateLocations, validatePK } from "@fjell/validation";
 import type { ErrorContext, WrapperOptions } from "./types";
 import LibLogger from "../../logger";
 

@@ -5,7 +5,7 @@
  */
 
 import { ComKey, Coordinate, Item, PriKey, RemoveMethod } from "@fjell/types";
-import { validateKey } from "../../validation";
+import { validateKey } from "@fjell/validation";
 import type { ErrorContext, WrapperOptions } from "./types";
 import LibLogger from "../../logger";
 

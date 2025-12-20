@@ -1,29 +1,62 @@
-export * from "./dictionary";
-export * from "./Coordinate";
+// Framework Major Components
+export * from '@fjell/types';
+export { IQFactory } from './item/IQFactory';
+export { IFactory } from './item/IFactory';
 export { AItemService } from "./AItemService";
-
-// Core Types (re-exported from @fjell/types)
-export * from '@fjell/types/key';
-export * from '@fjell/types/item';
-export * from '@fjell/types/query';
-export * from '@fjell/types/operations';
+export { Coordinate, createCoordinate } from "./Coordinate";
+export * from "./dictionary";
 
 // Utilities and Implementations
-export * from './key/KUtils';
-export { isComKey, isPriKey } from './key/KUtils';
-export * from './item/IFactory';
-export * from './item/IQFactory';
-export * from './item/IQUtils';
-export * from './item/IUtils';
+export {
+  isComKey,
+  isPriKey,
+  createNormalizedHashFunction,
+  isPriKeyEqualNormalized,
+  isLocKeyEqualNormalized,
+  isComKeyEqualNormalized,
+  isItemKeyEqualNormalized,
+  isItemKeyEqual,
+  isPriKeyEqual,
+  isLocKeyEqual,
+  isComKeyEqual,
+  isItemKey,
+  isLocKey,
+  generateKeyArray,
+  constructPriKey,
+  cPK,
+  toKeyTypeArray,
+  extractKeyTypeArray,
+  abbrevIK,
+  abbrevLKA,
+  primaryType,
+  itemKeyToLocKeyArray,
+  ikToLKA,
+  locKeyArrayToItemKey,
+  isValidPriKey,
+  isValidLocKey,
+  isValidLocKeyArray,
+  isValidComKey,
+  isValidItemKey,
+  lkaToIK
+} from './key/KUtils';
 
-// Validation
-export * from '@fjell/validation';
-export { validatePK, validateKeys } from '@fjell/validation';
+export {
+  queryToParams,
+  paramsToQuery,
+  isQueryMatch,
+  abbrevQuery,
+  abbrevRef,
+  abbrevAgg,
+  abbrevCompoundCondition,
+  abbrevCondition
+} from './item/IQUtils';
+export {
+  isPriItem,
+  isComItem
+} from './item/IUtils';
 
 // Error types and handling
 export * from './errors';
-export { ValidationError } from './errors';
-export type { FieldError } from './errors';
 
 // Operations Runtime (wrappers, etc.)
 export * from './operations';

@@ -5,7 +5,7 @@
  */
 
 import { ActionOperationMethod, AffectedKeys, ComKey, Coordinate, Item, OperationParams, PriKey } from "@fjell/types";
-import { validateActionName, validateKey, validateOperationParams, validatePK } from "../../validation";
+import { validateActionName, validateKey, validateOperationParams, validatePK } from "@fjell/validation";
 import type { ErrorContext, WrapperOptions } from "./types";
 import LibLogger from "../../logger";
 
